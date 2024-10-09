@@ -1,0 +1,20 @@
+#admin-navigation-bar {
+    grid-area: admin-navigation-bar;
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+    height: fit-content;
+}
+
+#admin-navigation-bar a {
+    text-decoration: none;
+    font-weight: bold;
+    color: black;
+    padding: 10px;
+    border-radius: 10px;
+    width: 100%;
+}
+
+#admin-navigation-bar > .active {
+    background-color: #e8edf2;
+}

@@ -1,0 +1,35 @@
+#search-patient {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    border: none;
+    background-color: hsl(210, 33%, 93%);
+    border-radius: 10px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+#patients-list {
+    width: 100%;
+    border: #7995af 1px solid;
+    border-radius: 10px;
+}
+
+.element-speciality {
+    color: #7995af;
+}
+
+#patients-legend {
+    font-weight: lighter;
+    border-bottom: #7995af 1px solid;
+}
+
+.patient-list-element {
+    display: grid;
+    grid-template-columns: 33% 33% 33%;
+    padding-inline: 10px;
+}
+
+.patient-list-element h3 {
+    width: fit-content;
+}

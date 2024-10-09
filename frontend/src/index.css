@@ -1,0 +1,12 @@
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+#root {
+    width: 90%;
+    height: 90%;
+    padding: 20px;
+}

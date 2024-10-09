@@ -1,0 +1,32 @@
+#account-info {
+    grid-area: account-info;
+    width: fit-content;
+    height: fit-content;
+    display: grid;
+    grid-template-areas: 
+        "avatar name"
+        "avatar type";
+    align-items: center;
+}
+
+#accout-avatar {
+    width: 1.5cm;
+    grid-area: avatar;
+    height: fit-content;
+    margin-right: 10px;
+}
+
+#account-name {
+    width: fit-content;
+    height: fit-content;
+    margin: 0;
+    grid-area: name;
+}
+
+#account-type {
+    width: fit-content;
+    height: fit-content;
+    margin: 0;
+    grid-area: type;
+    color: #7995af;
+}
