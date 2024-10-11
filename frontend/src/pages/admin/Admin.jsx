@@ -5,6 +5,9 @@ import {
     RouterProvider,
 } from "react-router-dom"
 
+import { StrictMode } from "react"
+import { createRoot } from "react-dom/client"
+
 import AccountInfo from "../../components/AccountInfo"
 import AdminNavigationBar from "../../components/admin/AdminNavigationBar"
 
@@ -12,15 +15,18 @@ import AdminProfile from "./AdminProfile"
 import AdminSchedule from "./AdminSchedule"
 import AdminPatients from "./AdminPatients"
 
+import "../../index.css"
 import "./Admin.css"
+import AdminDoctors from "./AdminDoctors"
 
 
 function Admin() {
     const router = createBrowserRouter(
         createRoutesFromElements(<>
-            <Route path="profile"  element={ <AdminProfile/> }/>
-            <Route path="patients" element={ <AdminPatients/> }/>
+            <Route path="/"        element={ <AdminProfile/> }/>
             <Route path="schedule" element={ <AdminSchedule/> }/>
+            <Route path="patients" element={ <AdminPatients/> }/>
+            <Route path="doctors"  element={ <AdminDoctors/> }/>
         </>)
     )
 
@@ -35,4 +41,9 @@ function Admin() {
     </>)
 }
 
-export default Admin
+
+createRoot(document.getElementById("root")).render(
+    <StrictMode>
+        <Admin/>
+    </StrictMode>
+);

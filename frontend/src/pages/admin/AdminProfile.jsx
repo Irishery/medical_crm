@@ -1,13 +1,9 @@
-import { useSearchParams } from "react-router-dom"
+import AccountInfo from "../../components/AccountInfo"
 
 function AdminProfile() {
-    const [searchParams] = useSearchParams()
-    const email    = searchParams.get("email"),
-          password = searchParams.get("password")
-
     return (
         <div id="profile-container">
-            <h1>{ email }</h1>
+            <AccountInfo/>
         </div>
     )
 }

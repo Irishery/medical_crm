@@ -18,3 +18,36 @@
 #admin-navigation-bar > .active {
     background-color: #e8edf2;
 }
+
+#admin-navigation-bar-actions {
+    grid-area: admin-navigation-bar-actions;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 90%;
+}
+
+#admin-navigation-bar-actions a {
+    text-decoration: none;
+    color: black;
+}
+
+#new-patient {
+    font-weight: bold;
+    text-align: center;
+    background-color: #1980e5;
+    color: white !important;
+    padding: 10px;
+    border-radius: 10px;
+    width: 100%;
+}
+
+#new-appointment {
+    font-weight: bold;
+    text-align: center;
+    background-color: #1980e5;
+    color: white !important;
+    padding: 10px;
+    border-radius: 10px;
+    width: 100%;
+}

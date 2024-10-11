@@ -1,4 +1,4 @@
-#search-patient {
+#search-doctor {
     width: 100%;
     padding: 10px;
     box-sizing: border-box;
@@ -9,7 +9,7 @@
     margin-bottom: 20px;
 }
 
-#patients-list {
+#doctors-list {
     width: 100%;
     border: #7995af 1px solid;
     border-radius: 10px;
@@ -19,17 +19,17 @@
     color: #346089;
 }
 
-#patients-legend {
+#doctors-legend {
     font-weight: lighter;
     border-bottom: #7995af 1px solid;
 }
 
-.patient-list-element {
+.doctor-list-element {
     display: grid;
     grid-template-columns: 33% 33% 33%;
     padding-inline: 10px;
 }
 
-.patient-list-element h3 {
+.doctor-list-element h3 {
     width: fit-content;
 }

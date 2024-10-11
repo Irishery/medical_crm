@@ -4,10 +4,11 @@
     display: grid;
     grid-template-areas:
         "account-info page-container"
-        "admin-navigation-bar page-container";
+        "admin-navigation-bar page-container"
+        "admin-navigation-bar-actions page-container";
     gap: 30px;
     grid-template-columns: 30% 70%;
-    grid-template-rows: 10% 90%;
+    grid-template-rows: 10% 65% 25%;
 }
 
 #page-container > .page-title {

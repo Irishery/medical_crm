@@ -9,7 +9,7 @@ function AdminPatients() {
 
     return (<>
         <h1 className="page-title">База пациентов</h1>
-        <input type="text" id="search-patient" placeholder="Искать по ФИО/контактам"/>
+        <input type="text" id="search-patient" placeholder="🔍︎ Искать по ФИО / контактам"/>
         <div id="patients-list">
             <div id="patients-legend" className="patient-list-element">
                 <h4>Доктор</h4>
