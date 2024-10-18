@@ -1,0 +1,26 @@
+#new-patient-form {
+    display: flex;
+    flex-direction: column;
+}
+
+#new-patient-form form {
+    display: flex;
+    flex-direction: column;
+}
+
+#new-patient-form form input {
+    margin-bottom: 20px;
+    border-radius: 10px;
+    border: 1px lightgray solid;
+    padding: 5px;
+}
+
+#new-patient-form form button {
+    margin-top: 10px;
+    width: fit-content;
+    align-self: flex-end;
+    border: none;
+    background-color: white;
+    color: #1980e5;
+    font-weight: bold;
+}

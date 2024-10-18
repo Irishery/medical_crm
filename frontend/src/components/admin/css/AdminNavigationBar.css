@@ -40,6 +40,7 @@
     padding: 10px;
     border-radius: 10px;
     width: 100%;
+    border: none;
 }
 
 #new-appointment {
@@ -50,4 +51,5 @@
     padding: 10px;
     border-radius: 10px;
     width: 100%;
+    border: none;
 }

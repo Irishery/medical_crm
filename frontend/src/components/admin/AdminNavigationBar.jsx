@@ -1,6 +1,15 @@
-import "./AdminNavigationBar.css"
+import { useState } from "react"
+import Modal from "react-modal";
+
+import "./css/AdminNavigationBar.css"
+import NewPatientForm from "./NewPatientForm";
+
 
 function AdminNavigationBar() {
+    Modal.setAppElement("#root")
+
+    const [isNewPatient,     setPatientModal]     = useState(false)
+    const [isNewAppointment, setAppointmentModal] = useState(false)
     const pathname = location.pathname
 
     return (<>
@@ -11,10 +20,45 @@ function AdminNavigationBar() {
             <a href="/doctors"  className={ pathname == "/doctors"?  "active" : "" }>Доктора</a>
         </div>
         <div id="admin-navigation-bar-actions">
-            <a href="/patients/new" id="new-patient">Новый пациент</a>
-            <a href="/schedule/new" id="new-appointment">Новый приём</a>
+            <button id="new-patient" onClick={ () => setPatientModal(true) }>Новый пациент</button>
+            <button id="new-appointment" onClick={ () => setAppointmentModal(true) }>Новый приём</button>
             <a href="/logout" id="logout">→ Выход</a>
         </div>
+        <Modal
+            isOpen         = { isNewPatient }
+            onRequestClose = { () => setPatientModal(false) }
+            style          = {{
+                content: {
+                    top: "50%",
+                    left: "50%",
+                    right: "auto",
+                    bottom: "auto",
+                    marginRight: "-50%",
+                    transform: "translate(-50%, -50%)",
+                    borderRadius: "10px"
+                }
+              }}
+              contentLabel = "Новый пациент"
+        >
+            <NewPatientForm/>
+        </Modal>
+        <Modal
+            isOpen         = { isNewAppointment }
+            onRequestClose = { () => setAppointmentModal(false) }
+            style          = {{
+                content: {
+                    top: "50%",
+                    left: "50%",
+                    right: "auto",
+                    bottom: "auto",
+                    marginRight: "-50%",
+                    transform: "translate(-50%, -50%)"
+                }
+              }}
+              contentLabel = "Новый приём"
+        >
+            <h1>Приём</h1>
+        </Modal>
     </>)
 }
 

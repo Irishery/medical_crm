@@ -1,5 +1,5 @@
 import PatientsListElement from "../../components/admin/AdminPatientsListElement"
-import "./AdminPatients.css"
+import "./css/AdminPatients.css"
 
 function AdminPatients() {
     const patients = [

@@ -14,16 +14,16 @@ import AdminNavigationBar from "../../components/admin/AdminNavigationBar"
 import AdminProfile from "./AdminProfile"
 import AdminSchedule from "./AdminSchedule"
 import AdminPatients from "./AdminPatients"
+import AdminDoctors from "./AdminDoctors"
 
 import "../../index.css"
-import "./Admin.css"
-import AdminDoctors from "./AdminDoctors"
+import "./css/Admin.css"
 
 
 function Admin() {
     const router = createBrowserRouter(
         createRoutesFromElements(<>
-            <Route path="/"        element={ <AdminProfile/> }/>
+            <Route path="profile"  element={ <AdminProfile/> }/>
             <Route path="schedule" element={ <AdminSchedule/> }/>
             <Route path="patients" element={ <AdminPatients/> }/>
             <Route path="doctors"  element={ <AdminDoctors/> }/>

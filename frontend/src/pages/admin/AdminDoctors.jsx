@@ -1,10 +1,10 @@
 import DoctorsListElement from "../../components/admin/AdminDoctorsListElement"
-import "./AdminDoctors.css"
+import "./css/AdminDoctors.css"
 
 function AdminDoctors() {
     const doctors = [
-        {speciality: "Терапевт", name: "Попова Е. С."},
-        {speciality: "Дерматолог", name: "Колов С. В."},
+        {speciality: "Терапевт", name: "Бровцева Е. В."},
+        {speciality: "Дерматолог", name: "Алиева Г. В"},
     ]
 
     return (<>

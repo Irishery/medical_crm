@@ -4,14 +4,16 @@ import { ru } from "date-fns/locale"
 
 const EVENTS = [
     {
-      event_id: 1,
-      title: "Приём",
-      start: new Date(2024, 10, 11, 12, 0, 0, 0),
-      end: new Date(2024, 10, 11, 14, 0, 0, 0),
-      editable: true
+        event_id: 1,
+        admin_id: 1,
+        title: "Приём",
+        start: new Date(2024, 9, 18, 12, 0, 0, 0),
+        end: new Date(2024, 9, 18, 14, 0, 0, 0),
+        editable: true
     },
 ]
 
+console.log(EVENTS)
 
 async function fetchRemote(query) {
     console.log({ query })
@@ -27,14 +29,6 @@ async function fetchRemote(query) {
 async function handleConfirm(event, action) {
     console.log("handleConfirm =", action, event.title);
 
-    /**
-     * Make sure to return 4 mandatory fields:
-     * event_id: string|number
-     * title: string
-     * start: Date|string
-     * end: Date|string
-     * ....extra other fields depend on your custom fields/editor properties
-     */
     // Simulate http request: return added/edited event
     return new Promise((res, rej) => {
         if (action === "edit") {
@@ -47,10 +41,12 @@ async function handleConfirm(event, action) {
         // Make it slow just for testing
         setTimeout(() => {
             if (isFail) {
-                rej("Ops... Faild");
+                rej("Oops... Failed");
             } else {
                 res({
                     ...event,
+                    title: `${event.patient}`,
+
                     event_id: event.event_id
                 })
             }
@@ -80,7 +76,7 @@ function AdminSchedule() {
             weekStartOn: 1, 
             startHour: 8, 
             endHour: 19,
-            step: 30,
+            step: 60,
             navigation: true,
             disableGoToDay: false
         }}
@@ -110,9 +106,7 @@ function AdminSchedule() {
             validation: {
                 required: "Обязательно",
                 invalidEmail: "Неправильная почта",
-                onlyNumbers: "Только цифры",
-                min: "Минимум {{min}} букв",
-                max: "Максимум {{max}} букв"
+                onlyNumbers: "Только цифры"
             },
             moreEvents: "Больше",
             noDataToDisplay: "Пусто",
@@ -121,6 +115,47 @@ function AdminSchedule() {
 
         hourFormat = { 24 }
         locale = { ru }
+
+        fields = {[
+            {
+                name: "title",
+                type: "hidden"
+            },
+            {
+                name: "patient",
+                type: "select",
+                options: [
+                    { id: 0, text: "Попова Е. С.", value: "Попова Е. С." },
+                    { id: 1, text: "Колов С. В.", value: "Колов С. В." }
+                ],
+                config: {
+                    label: "Пациент",
+                    required: true,
+                    errMsg: "Выберите пациента"
+                }
+            },
+            {
+                name: "doctor",
+                type: "select",
+                options: [
+                    { id: 0, text: "Терапевт", value: "Бровцева Е. В." },
+                    { id: 1, text: "Дерматолог", value: "Алиева Г. В" }
+                ],
+                config: {
+                    label: "Доктор",
+                    required: true,
+                    errMsg: "Выберите доктора"
+                }
+            }
+        ]}
+
+        viewerExtraComponent=  {(fields, event) => {
+            return (
+                <div>
+                    <p>Запись пациента <b>{ event.patient }</b><br/>к доктору <b>{ event.doctor }</b></p>
+                </div>
+            )
+          }}
     />
 }
 

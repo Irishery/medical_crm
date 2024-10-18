@@ -1,4 +1,4 @@
-import "./AccountInfo.css"
+import "./css/AccountInfo.css"
 
 function AccountInfo() {
     return <div id="account-info">
