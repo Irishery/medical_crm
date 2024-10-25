@@ -1,5 +1,5 @@
-import DoctorsListElement from "../../components/admin/AdminDoctorsListElement"
 import "./css/AdminDoctors.css"
+
 
 function AdminDoctors() {
     const doctors = [
@@ -17,7 +17,12 @@ function AdminDoctors() {
             </div>
             {
                 doctors.map(doctor =>
-                    <DoctorsListElement { ...doctor }/>
+                    (
+                        <div className="doctor-list-element">
+                            <h4>{ doctor.name }</h4>
+                            <h4 className="element-speciality">{ doctor.speciality }</h4>
+                        </div>
+                    )
                 )
             }
         </div>

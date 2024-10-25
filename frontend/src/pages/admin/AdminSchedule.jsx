@@ -1,5 +1,7 @@
 import { Scheduler } from "@aldabil/react-scheduler";
 import { ru } from "date-fns/locale"
+import { useState } from "react";
+import Modal from "react-modal";
 
 
 const EVENTS = [
@@ -66,97 +68,119 @@ async function handleDelete(deletedId) {
 
 
 function AdminSchedule() {
-    return <Scheduler
-        getRemoteEvents = { fetchRemote }
-        onConfirm       = { handleConfirm }
-        onDelete        = { handleDelete }
+    const [medcardModal, setMedcardModal] = useState(false)
 
-        week = {{ 
-            weekDays: [0, 1, 2, 3, 4], 
-            weekStartOn: 1, 
-            startHour: 8, 
-            endHour: 19,
-            step: 60,
-            navigation: true,
-            disableGoToDay: false
-        }}
-
-        translations = {{
-            navigation: {
-                month: "Месяц",
-                week: "Неделя",
-                day: "День",
-                today: "Сегодня",
-                agenda: "Агенда"
-            },
-            form: {
-                addTitle: "Добавить",
-                editTitle: "Изменить",
-                confirm: "Подтвердить",
-                delete: "Удалить",
-                cancel: "Отмена"
-            },
-            event: {
-                title: "Заголовок",
-                subtitle: "Описание",
-                start: "Начало",
-                end: "Конец",
-                allDay: "Весь день"
-            },
-            validation: {
-                required: "Обязательно",
-                invalidEmail: "Неправильная почта",
-                onlyNumbers: "Только цифры"
-            },
-            moreEvents: "Больше",
-            noDataToDisplay: "Пусто",
-            loading: "Загрузка..."
-        }}
-
-        hourFormat = { 24 }
-        locale = { ru }
-
-        fields = {[
-            {
-                name: "title",
-                type: "hidden"
-            },
-            {
-                name: "patient",
-                type: "select",
-                options: [
-                    { id: 0, text: "Попова Е. С.", value: "Попова Е. С." },
-                    { id: 1, text: "Колов С. В.", value: "Колов С. В." }
-                ],
-                config: {
-                    label: "Пациент",
-                    required: true,
-                    errMsg: "Выберите пациента"
+    return (<>
+        <Modal
+            isOpen         = { medcardModal }
+            onRequestClose = { () => setMedcardModal(false) }
+            style          = {{
+                content: {
+                    top: "50%",
+                    left: "50%",
+                    right: "auto",
+                    bottom: "auto",
+                    marginRight: "-50%",
+                    transform: "translate(-50%, -50%)",
+                    borderRadius: "10px"
                 }
-            },
-            {
-                name: "doctor",
-                type: "select",
-                options: [
-                    { id: 0, text: "Терапевт", value: "Бровцева Е. В." },
-                    { id: 1, text: "Дерматолог", value: "Алиева Г. В" }
-                ],
-                config: {
-                    label: "Доктор",
-                    required: true,
-                    errMsg: "Выберите доктора"
-                }
-            }
-        ]}
+              }}
+              contentLabel = "Медкарта"
+        >
 
-        viewerExtraComponent=  {(fields, event) => {
-            return (
-                <div>
-                    <p>Запись пациента <b>{ event.patient }</b><br/>к доктору <b>{ event.doctor }</b></p>
-                </div>
-            )
-          }}
-    />
+        </Modal>
+        <Scheduler
+            getRemoteEvents = { fetchRemote }
+            onConfirm       = { handleConfirm }
+            onDelete        = { handleDelete }
+
+            week = {{ 
+                weekDays: [0, 1, 2, 3, 4], 
+                weekStartOn: 1, 
+                startHour: 8, 
+                endHour: 19,
+                step: 60,
+                navigation: true,
+                disableGoToDay: false
+            }}
+
+            translations = {{
+                navigation: {
+                    month: "Месяц",
+                    week: "Неделя",
+                    day: "День",
+                    today: "Сегодня",
+                    agenda: "Агенда"
+                },
+                form: {
+                    addTitle: "Добавить",
+                    editTitle: "Изменить",
+                    confirm: "Подтвердить",
+                    delete: "Удалить",
+                    cancel: "Отмена"
+                },
+                event: {
+                    title: "Заголовок",
+                    subtitle: "Описание",
+                    start: "Начало",
+                    end: "Конец",
+                    allDay: "Весь день"
+                },
+                validation: {
+                    required: "Обязательно",
+                    invalidEmail: "Неправильная почта",
+                    onlyNumbers: "Только цифры"
+                },
+                moreEvents: "Больше",
+                noDataToDisplay: "Пусто",
+                loading: "Загрузка..."
+            }}
+
+            hourFormat = { 24 }
+            locale = { ru }
+
+            fields = {[
+                {
+                    name: "title",
+                    type: "hidden"
+                },
+                {
+                    name: "patient",
+                    type: "select",
+                    options: [
+                        { id: 0, text: "Попова Е. С.", value: "Попова Е. С." },
+                        { id: 1, text: "Колов С. В.", value: "Колов С. В." }
+                    ],
+                    config: {
+                        label: "Пациент",
+                        required: true,
+                        errMsg: "Выберите пациента"
+                    }
+                },
+                {
+                    name: "doctor",
+                    type: "select",
+                    options: [
+                        { id: 0, text: "Терапевт", value: "Бровцева Е. В." },
+                        { id: 1, text: "Дерматолог", value: "Алиева Г. В" }
+                    ],
+                    config: {
+                        label: "Доктор",
+                        required: true,
+                        errMsg: "Выберите доктора"
+                    }
+                }
+            ]}
+
+            viewerExtraComponent=  {(fields, event) => {
+                return (
+                    <div>
+                        <p>Запись пациента <b>{ event.patient }</b><br/>к доктору <b>{ event.doctor }</b></p>
+                    </div>
+                )
+            }}
+        />
+    </>)
 }
 
 export default AdminSchedule

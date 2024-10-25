@@ -8,8 +8,8 @@ import NewPatientForm from "./NewPatientForm";
 function AdminNavigationBar() {
     Modal.setAppElement("#root")
 
-    const [isNewPatient,     setPatientModal]     = useState(false)
-    const [isNewAppointment, setAppointmentModal] = useState(false)
+    const [newPatientModal,     setPatientModal]     = useState(false)
+    const [newAppointmentModal, setAppointmentModal] = useState(false)
     const pathname = location.pathname
 
     return (<>
@@ -25,7 +25,7 @@ function AdminNavigationBar() {
             <a href="/logout" id="logout">→ Выход</a>
         </div>
         <Modal
-            isOpen         = { isNewPatient }
+            isOpen         = { newPatientModal }
             onRequestClose = { () => setPatientModal(false) }
             style          = {{
                 content: {
@@ -43,7 +43,7 @@ function AdminNavigationBar() {
             <NewPatientForm/>
         </Modal>
         <Modal
-            isOpen         = { isNewAppointment }
+            isOpen         = { newAppointmentModal }
             onRequestClose = { () => setAppointmentModal(false) }
             style          = {{
                 content: {
