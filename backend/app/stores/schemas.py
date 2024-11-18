@@ -6,9 +6,9 @@ from enum import Enum
 
 # Перечисление ролей пользователей
 class UserRole(str, Enum):
-    admin = "администратор"
-    doctor = "врач"
-    head_doctor = "главный врач"
+    admin = "admin"
+    doctor = "doctor"
+    head_doctor = "head_doctor"
 
 # Базовая модель пользователя
 
@@ -16,8 +16,6 @@ class UserRole(str, Enum):
 class UserBase(BaseModel):
     username: str
     role: UserRole
-    full_name: str
-    contact_info: str
 
 # Модель для создания пользователя (с паролем)
 
@@ -38,8 +36,10 @@ class UserResponse(UserBase):
 
 
 class DoctorBase(BaseModel):
+    user_id: int
     specialty: str
     contact_info: str
+    full_name: str
 
 # Модель для создания врача
 
@@ -47,16 +47,31 @@ class DoctorBase(BaseModel):
 class DoctorCreate(DoctorBase):
     pass
 
-# Модель для ответа врача
+    # Модель для ответа врача
 
 
 class DoctorResponse(DoctorBase):
     id: int
-    user: UserResponse
 
     class Config:
         orm_mode = True
 
+
+class AdminBase(BaseModel):
+    user_id: int
+    full_name: str
+    contact_info: str
+
+
+class AdminCreate(AdminBase):
+    pass
+
+
+class AdminResponse(AdminBase):
+    id: int
+
+    class Config:
+        orm_mode = True
 # Базовая модель пациента
 
 

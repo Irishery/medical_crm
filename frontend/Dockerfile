@@ -19,4 +19,4 @@ RUN npm run build
 EXPOSE 3000
 
 # Start the application
-CMD ["npx", "vite"]
+CMD ["npx", "vite", "--host"]

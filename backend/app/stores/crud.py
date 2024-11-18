@@ -1,4 +1,5 @@
 # crud.py
+from sqlalchemy import func, desc
 from sqlalchemy.orm import Session
 from . import models, schemas
 from passlib.context import CryptContext
@@ -6,13 +7,22 @@ from passlib.context import CryptContext
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
+def get_full_name(db: Session, user_id: int):
+    return db.query(models.User.full_name).filter(models.User.id == user_id).first()
+
+
 def get_user(db: Session, user_id: int):
     return db.query(models.User).filter(models.User.id == user_id).first()
 
 
+def get_user_by_username(db: Session, username: str):
+    return db.query(models.User).filter(models.User.username == username).first()
+
+
 def create_user(db: Session, user: schemas.UserCreate):
     hashed_password = pwd_context.hash(user.password)
-    db_user = models.User(**user.dict(), password=hashed_password)
+    user.password = hashed_password
+    db_user = models.User(**user.dict())
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
@@ -21,6 +31,27 @@ def create_user(db: Session, user: schemas.UserCreate):
 
 def get_doctor(db: Session, doctor_id: int):
     return db.query(models.Doctor).filter(models.Doctor.id == doctor_id).first()
+
+
+def get_doctors(db: Session, skip: int = 0, limit: int = 10, search: str = None):
+    query = db.query(models.Doctor)
+
+    if search:
+        search_query = " & ".join(search.split())  # Заменяем пробелы на AND
+
+        search_vector = func.to_tsvector(
+            "russian", models.Doctor.full_name + ' ' + models.Doctor.specialty)
+        ts_query = func.to_tsquery("russian", search_query)
+
+        query = query.filter(search_vector.op("@@")(ts_query))
+        query = query.order_by(desc(func.ts_rank(search_vector, ts_query)))
+
+    return query.offset(skip).limit(limit).all()
+
+
+def delete_doctor(db: Session, doctor_id: int):
+    db.query(models.Doctor).filter(models.Doctor.id == doctor_id).delete()
+    db.commit()
 
 
 def create_doctor(db: Session, doctor: schemas.DoctorCreate):

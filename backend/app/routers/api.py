@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.stores import crud, schemas, models
 from app.stores.database import get_db
-from typing import List
+from typing import List, Optional
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 router = APIRouter()
@@ -72,10 +72,15 @@ def delete_user(user_id: int, db: Session = Depends(get_db)):
 # CRUD для врачей с сортировкой
 
 
-@router.get("/doctors/", response_model=List[schemas.DoctorResponse])
-def get_doctors(skip: int = 0, limit: int = 10, sort_by: str = "full_name", db: Session = Depends(get_db)):
-    doctors = crud.get_doctors(db, skip=skip, limit=limit, sort_by=sort_by)
-    return doctors
+@router.post("/doctors/", response_model=schemas.DoctorResponse)
+def create_doctor(doctor: schemas.DoctorCreate, db: Session = Depends(get_db)):
+    return crud.create_doctor(db=db, doctor=doctor)
+
+
+# @router.get("/doctors/", response_model=List[schemas.DoctorResponse])
+# def get_doctors(skip: int = 0, limit: int = 10, sort_by: str = "full_name", db: Session = Depends(get_db)):
+#     doctors = crud.get_doctors(db, skip=skip, limit=limit, sort_by=sort_by)
+#     return doctors
 
 
 @router.get("/doctors/{doctor_id}", response_model=schemas.DoctorResponse)
@@ -86,9 +91,15 @@ def get_doctor(doctor_id: int, db: Session = Depends(get_db)):
     return doctor
 
 
-@router.post("/doctors/", response_model=schemas.DoctorResponse)
-def create_doctor(doctor: schemas.DoctorCreate, db: Session = Depends(get_db)):
-    return crud.create_doctor(db=db, doctor=doctor)
+@router.get("/doctors/", response_model=List[schemas.DoctorResponse])
+def get_doctors(
+    skip: int = 0,
+    limit: int = 10,
+    search: Optional[str] = None,
+    db: Session = Depends(get_db)
+):
+    doctors = crud.get_doctors(db, skip=skip, limit=limit, search=search)
+    return doctors
 
 
 @router.delete("/doctors/{doctor_id}", response_model=schemas.DoctorResponse)
@@ -97,7 +108,7 @@ def delete_doctor(doctor_id: int, db: Session = Depends(get_db)):
     if doctor is None:
         raise HTTPException(status_code=404, detail="Врач не найден")
     crud.delete_doctor(db=db, doctor_id=doctor_id)
-    return {"message": "Врач удалён"}
+    return doctor
 
 # CRUD для пациентов с сортировкой
 
