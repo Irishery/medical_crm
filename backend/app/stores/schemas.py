@@ -36,8 +36,8 @@ class UserResponse(UserBase):
 
 
 class DoctorBase(BaseModel):
-    user_id: int
-    specialty: str
+    username: str
+    speciality: str
     contact_info: str
     full_name: str
 

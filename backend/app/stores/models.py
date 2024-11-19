@@ -31,9 +31,9 @@ class Doctor(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     # Внешний ключ на таблицу Users
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    username = Column(String, ForeignKey("users.username"), nullable=False)
     full_name = Column(String, nullable=False)
-    specialty = Column(String, nullable=False)
+    speciality = Column(String, nullable=False)
     contact_info = Column(String, nullable=False)
 
     search_vector = Column(TSVECTOR)
@@ -43,7 +43,7 @@ class Admin(Base):
     __tablename__ = "admins"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    username = Column(String, ForeignKey("users.username"), nullable=False)
     full_name = Column(String, nullable=False)
     contact_info = Column(String, nullable=False)
 

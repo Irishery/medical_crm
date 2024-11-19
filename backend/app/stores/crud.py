@@ -37,12 +37,16 @@ def get_doctors(db: Session, skip: int = 0, limit: int = 10, search: str = None)
     query = db.query(models.Doctor)
 
     if search:
-        search_query = " & ".join(search.split())  # Заменяем пробелы на AND
+        # Split search string into tokens and create a prefix query
+        search_tokens = search.split()
+        search_query = " & ".join([f"{token}:*" for token in search_tokens])
 
+        # Generate search vector and tsquery
         search_vector = func.to_tsvector(
-            "russian", models.Doctor.full_name + ' ' + models.Doctor.specialty)
+            "russian", models.Doctor.full_name + ' ' + models.Doctor.speciality)
         ts_query = func.to_tsquery("russian", search_query)
 
+        # Filter and sort by relevance
         query = query.filter(search_vector.op("@@")(ts_query))
         query = query.order_by(desc(func.ts_rank(search_vector, ts_query)))
 

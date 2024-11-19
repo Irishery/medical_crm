@@ -1,8 +1,8 @@
 """Initial migration
 
-Revision ID: 996ec3172118
+Revision ID: ffc651771ad5
 Revises: 
-Create Date: 2024-11-18 21:59:53.291292
+Create Date: 2024-11-19 04:21:41.566531
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision: str = '996ec3172118'
+revision: str = 'ffc651771ad5'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -48,21 +48,21 @@ def upgrade() -> None:
     op.create_index(op.f('ix_users_username'), 'users', ['username'], unique=True)
     op.create_table('admins',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('username', sa.String(), nullable=False),
     sa.Column('full_name', sa.String(), nullable=False),
     sa.Column('contact_info', sa.String(), nullable=False),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['username'], ['users.username'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_admins_id'), 'admins', ['id'], unique=False)
     op.create_table('doctors',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('username', sa.String(), nullable=False),
     sa.Column('full_name', sa.String(), nullable=False),
-    sa.Column('specialty', sa.String(), nullable=False),
+    sa.Column('speciality', sa.String(), nullable=False),
     sa.Column('contact_info', sa.String(), nullable=False),
     sa.Column('search_vector', postgresql.TSVECTOR(), nullable=True),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['username'], ['users.username'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_doctors_id'), 'doctors', ['id'], unique=False)

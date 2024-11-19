@@ -21,6 +21,15 @@ services:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - 1337:5432
+  
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
 
 volumes:
   postgres_data:
