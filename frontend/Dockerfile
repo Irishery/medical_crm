@@ -10,6 +10,8 @@ COPY ./package*.json ./
 RUN npm install @mui/material @emotion/react @emotion/styled
 RUN npm install @fontsource/roboto
 RUN npm install @mui/icons-material
+RUN npm install react-router-dom@latest
+
 # Copy the remaining application files to the working directory
 COPY . .
 

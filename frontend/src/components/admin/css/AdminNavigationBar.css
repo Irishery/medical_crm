@@ -1,56 +1,63 @@
-#admin-navigation-bar {
-    grid-area: admin-navigation-bar;
+#admin-nav {
+    width: 250px;
+    background-color: #f8f9fa;
     display: flex;
     flex-direction: column;
-    width: 90%;
-    height: fit-content;
+    height: 100vh;
+    padding: 20px;
 }
 
-#admin-navigation-bar a {
-    text-decoration: none;
-    font-weight: bold;
-    color: black;
-    padding: 10px;
-    border-radius: 10px;
-    box-sizing: border-box;
-    width: 100%;
+.search-bar {
+    margin-bottom: 24px;
 }
 
-#admin-navigation-bar > .active {
-    background-color: #e8edf2;
-}
-
-#admin-navigation-bar-actions {
-    grid-area: admin-navigation-bar-actions;
+.admin-nav-header {
     display: flex;
-    flex-direction: column;
-    gap: 20px;
-    width: 90%;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
-#admin-navigation-bar-actions a {
+.admin-avatar {
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    margin-right: 15px;
+}
+
+.admin-info h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #333;
+}
+
+.admin-info .admin-role {
+    font-size: 0.9rem;
+    color: #888;
+}
+
+.admin-nav-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-grow: 1;
+}
+
+.admin-nav-menu li {
+    margin-bottom: 10px;
+}
+
+.admin-nav-menu li a {
     text-decoration: none;
-    color: black;
+    color: #333;
+    font-size: 1rem;
+    padding: 10px 15px;
+    display: block;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
 }
 
-#new-patient {
-    font-weight: bold;
-    text-align: center;
-    background-color: #1980e5;
-    color: white !important;
-    padding: 10px;
-    border-radius: 10px;
-    width: 100%;
-    border: none;
-}
-
-#new-appointment {
-    font-weight: bold;
-    text-align: center;
-    background-color: #1980e5;
-    color: white !important;
-    padding: 10px;
-    border-radius: 10px;
-    width: 100%;
-    border: none;
+.admin-nav-menu li a.active,
+.admin-nav-menu li a:hover {
+    background-color: #E8EDF2;
+    color: #0D141C;
 }

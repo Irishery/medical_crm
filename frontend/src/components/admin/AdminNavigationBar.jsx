@@ -1,65 +1,40 @@
-import { useState } from "react"
-import Modal from "react-modal";
-
-import "./css/AdminNavigationBar.css"
-import NewPatientForm from "./NewPatientForm";
-
+import { NavLink } from "react-router-dom";
+import "./css/AdminNavigationBar.css";
 
 function AdminNavigationBar() {
-    Modal.setAppElement("#root")
-
-    const [newPatientModal,     setPatientModal]     = useState(false)
-    const [newAppointmentModal, setAppointmentModal] = useState(false)
-    const pathname = location.pathname
-
-    return (<>
-        <div id="admin-navigation-bar">
-            <a href="/profile"  className={ pathname == "/profile"?  "active" : "" }>Профиль</a>
-            <a href="/schedule" className={ pathname == "/schedule"? "active" : "" }>Расписание</a>
-            <a href="/patients" className={ pathname == "/patients"? "active" : "" }>Пациенты</a>
-            <a href="/doctors"  className={ pathname == "/doctors"?  "active" : "" }>Доктора</a>
-        </div>
-        <div id="admin-navigation-bar-actions">
-            <button id="new-patient" onClick={ () => setPatientModal(true) }>Новый пациент</button>
-            <button id="new-appointment" onClick={ () => setAppointmentModal(true) }>Новый приём</button>
-            <a href="/logout" id="logout">→ Выход</a>
-        </div>
-        <Modal
-            isOpen         = { newPatientModal }
-            onRequestClose = { () => setPatientModal(false) }
-            style          = {{
-                content: {
-                    top: "50%",
-                    left: "50%",
-                    right: "auto",
-                    bottom: "auto",
-                    marginRight: "-50%",
-                    transform: "translate(-50%, -50%)",
-                    borderRadius: "10px"
-                }
-              }}
-              contentLabel = "Новый пациент"
-        >
-            <NewPatientForm/>
-        </Modal>
-        <Modal
-            isOpen         = { newAppointmentModal }
-            onRequestClose = { () => setAppointmentModal(false) }
-            style          = {{
-                content: {
-                    top: "50%",
-                    left: "50%",
-                    right: "auto",
-                    bottom: "auto",
-                    marginRight: "-50%",
-                    transform: "translate(-50%, -50%)"
-                }
-              }}
-              contentLabel = "Новый приём"
-        >
-            <h1>Приём</h1>
-        </Modal>
-    </>)
+    return (
+        <nav id="admin-nav">
+            <div className="admin-nav-header">
+                <img src="https://img.freepik.com/free-vector/people-design-illustration_24877-49375.jpg" alt="Admin Avatar" className="admin-avatar" />
+                <div className="admin-info">
+                    <h3>Светлана Светлановна</h3>
+                    <p className="admin-role">Администратор</p>
+                </div>
+            </div>
+            <ul className="admin-nav-menu">
+                <li>
+                    <NavLink to="/profile" className={({ isActive }) => isActive ? "active" : ""}>
+                        Профиль
+                    </NavLink>
+                </li>
+                <li>
+                    <NavLink to="/schedule" className={({ isActive }) => isActive ? "active" : ""}>
+                        Расписание
+                    </NavLink>
+                </li>
+                <li>
+                    <NavLink to="/patients" className={({ isActive }) => isActive ? "active" : ""}>
+                        Пациенты
+                    </NavLink>
+                </li>
+                <li>
+                    <NavLink to="/doctors" className={({ isActive }) => isActive ? "active" : ""}>
+                        Врачи
+                    </NavLink>
+                </li>
+            </ul>
+        </nav>
+    );
 }
 
-export default AdminNavigationBar
+export default AdminNavigationBar;
