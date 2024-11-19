@@ -68,7 +68,7 @@ const DoctorDatabase = () => {
         </TableBody>
       </Table>
       <TablePagination
-        rowsPerPageOptions={[5, 10, 20]}
+        rowsPerPageOptions={[5, 10]}
         component="div"
         count={totalDoctors}
         rowsPerPage={rowsPerPage}

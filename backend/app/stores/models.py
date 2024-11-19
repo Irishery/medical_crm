@@ -59,6 +59,8 @@ class Patient(Base):
     contact_info = Column(String, nullable=False)
     medical_record_id = Column(Integer, ForeignKey("medical_records.id"))
 
+    search_vector = Column(TSVECTOR)
+
 # Модель расписания врачей
 
 
@@ -92,17 +94,17 @@ class MedicalRecord(Base):
     id = Column(Integer, primary_key=True, index=True)
     created_at = Column(DateTime, default=datetime.utcnow)  # Дата создания
     full_name = Column(String, nullable=False)  # ФИО пациента
-    gender = Column(String, nullable=False)  # Пол пациента
-    dob = Column(DateTime, nullable=False)  # Дата рождения
-    registration_address = Column(String, nullable=False)  # Место регистрации
+    gender = Column(String, nullable=True)  # Пол пациента
+    dob = Column(DateTime, nullable=True)  # Дата рождения
+    registration_address = Column(String, nullable=True)  # Место регистрации
     insurance_series_number = Column(
-        String, nullable=False)  # Серия и номер полиса ОМС
+        String, nullable=True)  # Серия и номер полиса ОМС
     # Страховая медицинская организация
-    insurance_company = Column(String, nullable=False)
-    social_security_number = Column(String, nullable=False)  # СНИЛС
+    insurance_company = Column(String, nullable=True)
+    social_security_number = Column(String, nullable=True)  # СНИЛС
     benefit_code = Column(String, nullable=True)  # Код льготы
     # Документ удостоверяющий личность
-    identity_document = Column(String, nullable=False)
+    identity_document = Column(String, nullable=True)
     diseases = Column(Text, nullable=True)  # Список заболеваний
     icd_code = Column(String, nullable=True)  # Код по МКБ-10
 

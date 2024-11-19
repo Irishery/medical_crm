@@ -114,8 +114,13 @@ def delete_doctor(doctor_id: int, db: Session = Depends(get_db)):
 
 
 @router.get("/patients/", response_model=List[schemas.PatientResponse])
-def get_patients(skip: int = 0, limit: int = 10, sort_by: str = "full_name", db: Session = Depends(get_db)):
-    patients = crud.get_patients(db, skip=skip, limit=limit, sort_by=sort_by)
+def get_doctors(
+    skip: int = 0,
+    limit: int = 10,
+    search: Optional[str] = None,
+    db: Session = Depends(get_db)
+):
+    patients = crud.get_patients(db, skip=skip, limit=limit, search=search)
     return patients
 
 

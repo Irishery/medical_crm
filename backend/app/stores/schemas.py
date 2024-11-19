@@ -90,6 +90,7 @@ class PatientCreate(PatientBase):
 
 class PatientResponse(PatientBase):
     id: int
+    medical_record_id: int
 
     class Config:
         orm_mode = True
@@ -147,14 +148,14 @@ class ScheduleResponse(ScheduleBase):
 
 class MedicalRecordBase(BaseModel):
     full_name: str
-    gender: str
-    dob: datetime
-    registration_address: str
-    insurance_series_number: str
-    insurance_company: str
-    social_security_number: str
+    gender: Optional[str] = None
+    dob: Optional[str] = None
+    registration_address: Optional[str] = None
+    insurance_series_number: Optional[str] = None
+    insurance_company: Optional[str] = None
+    social_security_number: Optional[str] = None
     benefit_code: Optional[str] = None
-    identity_document: str
+    identity_document: Optional[str] = None
     diseases: Optional[str] = None
     icd_code: Optional[str] = None
 
@@ -169,8 +170,6 @@ class MedicalRecordCreate(MedicalRecordBase):
 
 class MedicalRecordResponse(MedicalRecordBase):
     id: int
-    created_at: datetime
-    patient: PatientResponse
 
     class Config:
         orm_mode = True

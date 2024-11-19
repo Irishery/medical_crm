@@ -66,8 +66,37 @@ def create_doctor(db: Session, doctor: schemas.DoctorCreate):
     return db_doctor
 
 
+def get_patients(db: Session, skip: int = 0, limit: int = 10, search: str = None):
+    query = db.query(models.Patient)
+
+    if search:
+        # Split search string into tokens and create a prefix query
+        search_tokens = search.split()
+        search_query = " & ".join([f"{token}:*" for token in search_tokens])
+
+        # Generate search vector and tsquery
+        search_vector = func.to_tsvector(
+            "russian", models.Patient.full_name + ' ' + models.Patient.contact_info)
+        ts_query = func.to_tsquery("russian", search_query)
+
+        print(search)
+
+        # Filter and sort by relevance
+        query = query.filter(search_vector.op("@@")(ts_query))
+        query = query.order_by(desc(func.ts_rank(search_vector, ts_query)))
+
+    return query.offset(skip).limit(limit).all()
+
+
 def create_patient(db: Session, patient: schemas.PatientCreate):
     db_patient = models.Patient(**patient.dict())
+    db_patient.contact_info = "".join(db_patient.contact_info.split())
+    db_patient.contact_info = db_patient.contact_info.replace("+", "")
+
+    medical_record = create_medical_record(db, schemas.MedicalRecordCreate(
+        full_name=db_patient.full_name))
+
+    db_patient.medical_record_id = medical_record.id
     db.add(db_patient)
     db.commit()
     db.refresh(db_patient)
