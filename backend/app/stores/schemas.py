@@ -127,21 +127,27 @@ class ScheduleBase(BaseModel):
     date_time: datetime
     comments: Optional[str] = None
 
-# Модель для создания расписания врача
-
 
 class ScheduleCreate(ScheduleBase):
-    pass
-
-# Модель для ответа расписания врача
+    doctor_id: int
+    patient_id: int
 
 
 class ScheduleResponse(ScheduleBase):
     id: int
+
+    class Config:
+        orm_mode = True
+
+
+class ScheduleResponseDetailed(ScheduleBase):
+    id: int
+    patient: PatientResponse
     doctor: DoctorResponse
 
     class Config:
         orm_mode = True
+
 
 # Базовая модель медицинской карты
 

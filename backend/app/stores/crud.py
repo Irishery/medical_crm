@@ -1,6 +1,8 @@
 # crud.py
-from sqlalchemy import func, desc
-from sqlalchemy.orm import Session
+from sqlalchemy import extract
+from sqlalchemy.orm import aliased
+from sqlalchemy import func, desc, extract
+from sqlalchemy.orm import Session, aliased
 from . import models, schemas
 from passlib.context import CryptContext
 
@@ -92,6 +94,9 @@ def create_patient(db: Session, patient: schemas.PatientCreate):
     db_patient = models.Patient(**patient.dict())
     db_patient.contact_info = "".join(db_patient.contact_info.split())
     db_patient.contact_info = db_patient.contact_info.replace("+", "")
+    db_patient.contact_info = db_patient.contact_info.replace("(", "")
+    db_patient.contact_info = db_patient.contact_info.replace(")", "")
+    db_patient.contact_info = db_patient.contact_info.replace("-", "")
 
     medical_record = create_medical_record(db, schemas.MedicalRecordCreate(
         full_name=db_patient.full_name))
@@ -101,6 +106,10 @@ def create_patient(db: Session, patient: schemas.PatientCreate):
     db.commit()
     db.refresh(db_patient)
     return db_patient
+
+
+def get_patient(db: Session, patient_id: int):
+    return db.query(models.Patient).filter(models.Patient.id == patient_id).first()
 
 
 def create_appointment(db: Session, appointment: schemas.AppointmentCreate):
@@ -133,3 +142,129 @@ def create_consultation(db: Session, consultation: schemas.ConsultationCreate):
     db.commit()
     db.refresh(db_consultation)
     return db_consultation
+
+
+def get_schedules_by_doctor_and_month(db: Session, doctor_id: int, month: str):
+    """
+    Retrieve schedules for a doctor within a specific month, including patient details.
+    """
+    year, month_part = map(int, month.split('-'))
+
+    # Aliases for clarity
+    PatientAlias = aliased(models.Patient)
+    DoctorAlias = aliased(models.Doctor)
+
+    # Query to join schedules with doctor and patient data
+    result = (
+        db.query(
+            models.Schedule.id,
+            models.Schedule.date_time,
+            models.Schedule.comments,
+            PatientAlias.id.label("patient_id"),
+            PatientAlias.medical_record_id.label("medical_record_id"),
+            PatientAlias.full_name.label("patient_name"),
+            PatientAlias.contact_info.label("patient_contact"),
+            DoctorAlias.id.label("doctor_id"),
+            DoctorAlias.username.label("doctor_username"),
+            DoctorAlias.full_name.label("doctor_name"),
+            DoctorAlias.speciality.label("doctor_speciality"),
+            DoctorAlias.contact_info.label("doctor_contact"),
+        )
+        .join(PatientAlias, models.Schedule.patient_id == PatientAlias.id)
+        .join(DoctorAlias, models.Schedule.doctor_id == DoctorAlias.id)
+        .filter(
+            models.Schedule.doctor_id == doctor_id,
+            extract('year', models.Schedule.date_time) == year,
+            extract('month', models.Schedule.date_time) == month_part
+        )
+        .all()
+    )
+
+    # Map result to schemas
+    schedules = []
+    for row in result:
+        schedules.append(
+            schemas.ScheduleResponse(
+                id=row.id,
+                date_time=row.date_time,
+                comments=row.comments,
+                patient=schemas.PatientResponse(
+                    id=row.patient_id,
+                    full_name=row.patient_name,
+                    contact_info=row.patient_contact,
+                    # Placeholder if medical record is required
+                    medical_record_id=row.medical_record_id,
+                ),
+                doctor=schemas.DoctorResponse(
+                    id=row.doctor_id,
+                    full_name=row.doctor_name,
+                    speciality=row.doctor_speciality,
+                    contact_info=row.doctor_contact,
+                    username=row.doctor_username,  # Placeholder if username is required
+                ),
+            )
+        )
+
+    return schedules
+
+
+# TODO: add backpopulates in models to make this function easier
+
+
+def get_schedules(db: Session, skip: int = 0, limit: int = 10):
+    """
+    Retrieve schedules with detailed patient and doctor information.
+    """
+    # Aliases for clarity
+    PatientAlias = aliased(models.Patient)
+    DoctorAlias = aliased(models.Doctor)
+
+    # Query to join Schedule with Patient and Doctor
+    result = (
+        db.query(
+            models.Schedule.id,
+            models.Schedule.date_time,
+            models.Schedule.comments,
+            PatientAlias.id.label("patient_id"),
+            PatientAlias.medical_record_id.label("medical_record_id"),
+            PatientAlias.full_name.label("patient_name"),
+            PatientAlias.contact_info.label("patient_contact"),
+            DoctorAlias.id.label("doctor_id"),
+            DoctorAlias.username.label("doctor_username"),
+            DoctorAlias.full_name.label("doctor_name"),
+            DoctorAlias.speciality.label("doctor_speciality"),
+            DoctorAlias.contact_info.label("doctor_contact"),
+        )
+        .join(PatientAlias, models.Schedule.patient_id == PatientAlias.id)
+        .join(DoctorAlias, models.Schedule.doctor_id == DoctorAlias.id)
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
+
+    # Mapping result to schemas
+    schedules = []
+    for row in result:
+        schedules.append(
+            schemas.ScheduleResponse(
+                id=row.id,
+                date_time=row.date_time,
+                comments=row.comments,
+                patient=schemas.PatientResponse(
+                    id=row.patient_id,
+                    full_name=row.patient_name,
+                    contact_info=row.patient_contact,
+                    # Placeholder if medical record is required
+                    medical_record_id=row.medical_record_id,
+                ),
+                doctor=schemas.DoctorResponse(
+                    id=row.doctor_id,
+                    full_name=row.doctor_name,
+                    speciality=row.doctor_speciality,
+                    contact_info=row.doctor_contact,
+                    username=row.doctor_username,  # Placeholder if username is required
+                ),
+            )
+        )
+
+    return schedules

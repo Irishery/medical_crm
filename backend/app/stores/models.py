@@ -69,6 +69,7 @@ class Schedule(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     # Внешний ключ на таблицу Doctors
+    patient_id = Column(Integer, ForeignKey("patients.id"), nullable=False)
     doctor_id = Column(Integer, ForeignKey("doctors.id"), nullable=False)
     date_time = Column(DateTime, nullable=False)
     comments = Column(Text, nullable=True)

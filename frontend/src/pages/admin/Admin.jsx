@@ -21,7 +21,7 @@ function Admin() {
                 <AdminNavigationBar />
                 <div id="page-container">
                     <Routes>
-                        <Route path="/profile" element={<AdminProfile />} />
+                        {/* <Route path="/profile" element={<AdminProfile />} /> */}
                         <Route path="/schedule" element={<AdminSchedule />} />
                         <Route path="/patients" element={<AdminPatients />} />
                         <Route path="/doctors" element={<AdminDoctors />} />

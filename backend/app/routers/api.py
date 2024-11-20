@@ -170,7 +170,17 @@ def delete_appointment(appointment_id: int, db: Session = Depends(get_db)):
 # CRUD для расписания врачей
 
 
-@router.get("/schedules/", response_model=List[schemas.ScheduleResponse])
+@router.get("/schedules/{doctor_id}/{month}/", response_model=List[schemas.ScheduleResponseDetailed])
+def get_schedules_by_doctor_and_month(
+    doctor_id: int, month: str, db: Session = Depends(get_db)
+):
+    """
+    Get schedules for a doctor in a specific month.
+    """
+    return crud.get_schedules_by_doctor_and_month(db, doctor_id, month)
+
+
+@router.get("/schedules/", response_model=List[schemas.ScheduleResponseDetailed])
 def get_schedules(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
     schedules = crud.get_schedules(db, skip=skip, limit=limit)
     return schedules
@@ -178,6 +188,18 @@ def get_schedules(skip: int = 0, limit: int = 10, db: Session = Depends(get_db))
 
 @router.post("/schedules/", response_model=schemas.ScheduleResponse)
 def create_schedule(schedule: schemas.ScheduleCreate, db: Session = Depends(get_db)):
+    """
+    Create a new schedule for a doctor and patient.
+    """
+    # Validate existence of doctor and patient
+    doctor = crud.get_doctor(db, schedule.doctor_id)
+    if not doctor:
+        raise HTTPException(status_code=404, detail="Doctor not found")
+
+    patient = crud.get_patient(db, schedule.patient_id)
+    if not patient:
+        raise HTTPException(status_code=404, detail="Patient not found")
+
     return crud.create_schedule(db=db, schedule=schedule)
 
 

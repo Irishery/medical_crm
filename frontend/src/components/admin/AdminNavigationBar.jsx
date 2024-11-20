@@ -12,11 +12,11 @@ function AdminNavigationBar() {
                 </div>
             </div>
             <ul className="admin-nav-menu">
-                <li>
+                {/* <li>
                     <NavLink to="/profile" className={({ isActive }) => isActive ? "active" : ""}>
                         Профиль
                     </NavLink>
-                </li>
+                </li> */}
                 <li>
                     <NavLink to="/schedule" className={({ isActive }) => isActive ? "active" : ""}>
                         Расписание

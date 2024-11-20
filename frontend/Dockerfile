@@ -12,6 +12,7 @@ RUN npm install @fontsource/roboto
 RUN npm install @mui/icons-material
 RUN npm install react-router-dom@latest
 RUN npm install react-big-calendar moment react-select
+RUN npm install react-select
 
 
 # Copy the remaining application files to the working directory
