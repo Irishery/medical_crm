@@ -7,6 +7,7 @@ WORKDIR /app
 COPY ./package*.json ./
 
 # Install the dependencies
+RUN npm install jwt-decode
 RUN npm install @mui/material @emotion/react @emotion/styled
 RUN npm install @fontsource/roboto
 RUN npm install @mui/icons-material

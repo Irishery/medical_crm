@@ -1,4 +1,6 @@
 # crud.py
+from datetime import datetime, timedelta
+from jose import jwt
 from sqlalchemy import extract
 from sqlalchemy.orm import aliased
 from sqlalchemy import func, desc, extract
@@ -268,3 +270,39 @@ def get_schedules(db: Session, skip: int = 0, limit: int = 10):
         )
 
     return schedules
+
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+SECRET_KEY = "your_secret_key"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
+
+def authenticate_user(db, username: str, password: str):
+    user = get_user_by_username(db, username)
+    if not user:
+        return False
+    if not pwd_context.verify(password, user.password):
+        return False
+    return user
+
+
+def create_access_token(data: dict, expires_delta: timedelta = None):
+    to_encode = data.copy()
+    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
+
+
+def get_current_user(db, token: str):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username = payload.get("sub")
+        if username is None:
+            return None
+        user = get_user_by_username(db, username)
+        return user
+    except jwt.JWTError:
+        return None

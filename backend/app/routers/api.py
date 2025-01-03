@@ -4,36 +4,18 @@ from app.stores import crud, schemas, models
 from app.stores.database import get_db
 from typing import List, Optional
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+import logging
 
 router = APIRouter()
+
+logger = logging.getLogger('uvicorn.error')
+logger.setLevel(logging.DEBUG)
 
 # Для аутентификации через OAuth2
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-# Аутентификация пользователей
-
-
-@router.post("/token", response_model=schemas.Token)
-def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    user = crud.authenticate_user(db, form_data.username, form_data.password)
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Неверное имя пользователя или пароль",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    access_token = crud.create_access_token(data={"sub": user.username})
-    return {"access_token": access_token, "token_type": "bearer"}
 
 # Получить текущего пользователя
-
-
-@router.get("/users/me/", response_model=schemas.UserResponse)
-def read_users_me(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
-    user = crud.get_current_user(db, token)
-    if not user:
-        raise HTTPException(status_code=400, detail="Неверный токен")
-    return user
 
 # CRUD для пользователей
 
@@ -210,3 +192,29 @@ def delete_schedule(schedule_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Расписание не найдено")
     crud.delete_schedule(db=db, schedule_id=schedule_id)
     return {"message": "Расписание удалено"}
+
+
+@router.post("/token", response_model=schemas.Token)
+def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    user = crud.authenticate_user(db, form_data.username, form_data.password)
+    logger.debug("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaaa")
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    logger.debug("-------------------------")
+    logger.debug(user.role.value)
+    access_token = crud.create_access_token(
+        data={"sub": user.username, "role": user.role.value})
+    logger.debug("------------------------")
+    return {"access_token": access_token, "token_type": "bearer"}
+
+
+@router.get("/users/me/", response_model=schemas.UserResponse)
+def read_users_me(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    user = crud.get_current_user(db, token)
+    if not user:
+        raise HTTPException(status_code=400, detail="Invalid token")
+    return user

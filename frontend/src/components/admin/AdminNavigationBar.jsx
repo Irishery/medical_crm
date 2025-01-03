@@ -18,17 +18,17 @@ function AdminNavigationBar() {
                     </NavLink>
                 </li> */}
                 <li>
-                    <NavLink to="/schedule" className={({ isActive }) => isActive ? "active" : ""}>
+                    <NavLink to="/admin/schedule" className={({ isActive }) => isActive ? "active" : ""}>
                         Расписание
                     </NavLink>
                 </li>
                 <li>
-                    <NavLink to="/patients" className={({ isActive }) => isActive ? "active" : ""}>
+                    <NavLink to="/admin/patients" className={({ isActive }) => isActive ? "active" : ""}>
                         Пациенты
                     </NavLink>
                 </li>
                 <li>
-                    <NavLink to="/doctors" className={({ isActive }) => isActive ? "active" : ""}>
+                    <NavLink to="/admin/doctors" className={({ isActive }) => isActive ? "active" : ""}>
                         Врачи
                     </NavLink>
                 </li>
