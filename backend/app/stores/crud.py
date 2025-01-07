@@ -185,8 +185,9 @@ def get_schedules_by_doctor_and_month(db: Session, doctor_id: int, month: str):
     # Map result to schemas
     schedules = []
     for row in result:
+        print("DEBUG ", row)
         schedules.append(
-            schemas.ScheduleResponse(
+            schemas.ScheduleResponseDetailed(
                 id=row.id,
                 date_time=row.date_time,
                 comments=row.comments,
@@ -196,16 +197,19 @@ def get_schedules_by_doctor_and_month(db: Session, doctor_id: int, month: str):
                     contact_info=row.patient_contact,
                     # Placeholder if medical record is required
                     medical_record_id=row.medical_record_id,
-                ),
+                ) if row.patient_id else None,
                 doctor=schemas.DoctorResponse(
                     id=row.doctor_id,
                     full_name=row.doctor_name,
                     speciality=row.doctor_speciality,
                     contact_info=row.doctor_contact,
                     username=row.doctor_username,  # Placeholder if username is required
-                ),
+                ) if row.doctor_id else None,
             )
         )
+
+    for schedule in schedules:
+        print("DEBUG1", schedule)
 
     return schedules
 

@@ -37,7 +37,7 @@ function Login() {
 
                 // Redirect based on the role
                 if (userRole === "admin") {
-                    navigate("/admin");
+                    navigate("/admin/schedule");
                 } else if (userRole === "doctor") {
                     navigate("/doctor");
                 } else {

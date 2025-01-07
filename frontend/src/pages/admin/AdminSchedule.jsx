@@ -23,6 +23,11 @@ const inputStyle = {
 
 
 const doctors = [""];
+// const doctors = [
+//     { label: "Doctor 1 | Therapist", value: 1 },
+//     { label: "Doctor 2 | Cardiologist", value: 2 },
+// ];
+
 
 const initialEvents = [
     {
@@ -78,36 +83,46 @@ function AdminSchedule() {
     };
 
     const fetchDoctors = async (inputValue) => {
-        const response = await fetch(`http://127.0.0.1:8000/doctors/?skip=0&limit=10&search=${inputValue}`);
-        const data = await response.json();
-        return data.map((doctor) => ({
-            label: `${doctor.full_name} | ${doctor.speciality}`,
-            value: doctor.id,
-        }));
+        try {
+            const response = await fetch(`http://127.0.0.1:8000/doctors/?search=${inputValue}`);
+            const data = await response.json();
+            return data.map((doctor) => ({
+                label: `${doctor.full_name} | ${doctor.speciality}`,
+                value: doctor.id,
+            }));
+        } catch (error) {
+            console.error("Error fetching doctors:", error);
+            return [];
+        }
     };
 
     const fetchEventsByDoctor = async (doctorId) => {
         try {
-            const response = await fetch(`/api/events?doctorId=${doctorId}`);
-            const data = await response.json();
+            const response = await fetch(`http://127.0.0.1:8000/schedules/${doctorId}/2024-11`);
+            console.log("Response Headers:", response.headers);
+            console.log("Response Body (text):", await response.text()); // Inspect the raw body
 
-            // Transform API response to calendar event structure
-            return data.map(event => ({
-                id: event.id,
-                title: `Прием: ${event.patient.full_name}`, // Event title showing patient's name
-                start: new Date(event.date_time), // Start time from API
-                end: new Date(new Date(event.date_time).getTime() + 30 * 60000), // 30-minute default duration
-                doctorId: event.doctor.id,
-                patientName: event.patient.full_name,
-                doctorName: event.doctor.full_name,
-                adminComment: event.comments || "Нет комментариев", // Use comments for admin notes
+            // If you confirm JSON is returned:
+            const responseClone = await fetch(`http://127.0.0.1:8000/schedules/${doctorId}/2024-11`);
+            const data = await responseClone.json(); // Ensure a fresh body for this call
+
+            console.log("Parsed Data:", data);
+
+            return data.map(schedule => ({
+                id: schedule.id,
+                title: `Прием: ${schedule.patient.full_name}`,
+                start: new Date(schedule.date_time),
+                end: new Date(new Date(schedule.date_time).getTime() + 30 * 60000),
+                doctorId: schedule.doctor.id,
+                patientName: schedule.patient.full_name,
+                doctorName: schedule.doctor.full_name,
+                adminComment: schedule.comments || "Нет комментариев",
             }));
         } catch (error) {
             console.error("Error fetching events:", error);
             return [];
         }
     };
-
 
 
     const handleSaveChanges = (e) => {
@@ -133,12 +148,23 @@ function AdminSchedule() {
         .filter(event => event.doctorId === selectedDoctor.value)
 
     const handleSelectDoctor = async (selectedOption) => {
-        setSelectedDoctor(selectedOption);
+        // Ensure selectedOption is valid
+        if (!selectedOption) {
+            console.error("No doctor selected.");
+            return;
+        }
 
-        // Fetch and set events for the selected doctor
-        const fetchedEvents = await fetchEventsByDoctor(selectedOption.value);
-        setEvents(fetchedEvents);
+        try {
+            setSelectedDoctor(selectedOption);
+
+            // Optional: Fetch events or perform actions related to the selected doctor
+            const fetchedEvents = await fetchEventsByDoctor(selectedOption.value);
+            setEvents(fetchedEvents);
+        } catch (error) {
+            console.error("Error handling doctor selection:", error);
+        }
     };
+
 
 
 
@@ -157,13 +183,13 @@ function AdminSchedule() {
             <h2 className="schedule-title">Расписание</h2>
 
             <div className="controls">
-                <Select
-                    options={doctors} // Options array
-                    value={selectedDoctor} // Selected value
-                    onChange={handleSelectDoctor} // Dynamic event loading on doctor change
-                    placeholder="Выберите врача"
-                    isSearchable
-                    className="doctor-select"
+                <AsyncSelect
+                    cacheOptions
+                    loadOptions={fetchDoctors}
+                    defaultOptions // Load initial options without typing
+                    onChange={handleSelectDoctor}
+                    value={selectedDoctor}
+                    placeholder="Начните вводить имя врача"
                     styles={{
                         control: (provided) => ({
                             ...provided,
@@ -235,7 +261,7 @@ function AdminSchedule() {
                                 <AsyncSelect
                                     cacheOptions
                                     loadOptions={fetchPatients}
-                                    defaultOptions
+                                    defaultOptions={[]}
                                     value={{ label: editedPatientName, value: selectedEvent?.patientId }}
                                     onChange={(selected) => setEditedPatientName(selected.label)}
                                     isDisabled={!editMode}
@@ -250,7 +276,7 @@ function AdminSchedule() {
                                 <AsyncSelect
                                     cacheOptions
                                     loadOptions={fetchDoctors}
-                                    defaultOptions
+                                    defaultOptions={[]}
                                     value={{ label: editedDoctorName, value: selectedEvent?.doctorId }}
                                     onChange={(selected) => setEditedDoctorName(selected.label)}
                                     isDisabled={!editMode}
