@@ -8,9 +8,9 @@ COPY ./package*.json ./
 
 # Install the dependencies
 RUN npm install jwt-decode
-RUN npm install @mui/material @emotion/react @emotion/styled
-RUN npm install @fontsource/roboto
-RUN npm install @mui/icons-material
+RUN npm install @mui/material @emotion/react @emotion/styled --legacy-peer-deps
+RUN npm install @fontsource/roboto --legacy-peer-deps
+RUN npm install @mui/icons-material --legacy-peer-deps
 RUN npm install react-router-dom@latest
 RUN npm install react-big-calendar moment react-select
 RUN npm install react-select

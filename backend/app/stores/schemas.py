@@ -133,6 +133,19 @@ class ScheduleCreate(ScheduleBase):
     patient_id: int
 
 
+class ScheduleUpdate(ScheduleBase):
+    doctor_id: int
+    patient_id: int
+
+
+class ScheduleUpdateResponse(ScheduleBase):
+    id: int
+    doctor_id: int
+    patient_id: int
+    doctor_name: str
+    patient_name: str
+
+
 class ScheduleResponse(ScheduleBase):
     id: int
 
@@ -179,6 +192,10 @@ class MedicalRecordResponse(MedicalRecordBase):
 
     class Config:
         orm_mode = True
+
+
+class MedicalRecordUpdate(MedicalRecordBase):
+    pass
 
 # Базовая модель консультации
 

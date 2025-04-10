@@ -194,6 +194,89 @@ def delete_schedule(schedule_id: int, db: Session = Depends(get_db)):
     return {"message": "Расписание удалено"}
 
 
+@router.put("/schedules/{schedule_id}", response_model=schemas.ScheduleUpdateResponse)
+def update_schedule(schedule_id: int, schedule: schemas.ScheduleUpdate, db: Session = Depends(get_db)):
+    """
+    Update an existing schedule.
+    """
+    existing_schedule = crud.get_schedule(db, schedule_id=schedule_id)
+    if not existing_schedule:
+        raise HTTPException(status_code=404, detail="Расписание не найдено")
+
+    # Update the schedule
+
+    updated_schedule_raw = crud.update_schedule(db, schedule_id, schedule)
+    updated_schedule = schemas.ScheduleUpdateResponse(
+        id=updated_schedule_raw.id,
+        doctor_id=updated_schedule_raw.doctor_id,
+        doctor_name=crud.get_doctor(
+            db, updated_schedule_raw.doctor_id).full_name,
+        patient_id=updated_schedule_raw.patient_id,
+        patient_name=crud.get_patient(
+            db, updated_schedule_raw.patient_id).full_name,
+        comments=updated_schedule_raw.comments,
+        date_time=updated_schedule_raw.date_time
+    )
+    print(updated_schedule)
+
+    return updated_schedule
+
+
+@router.get("/patients/{patient_id}/medical-card", response_model=schemas.MedicalRecordResponse)
+def get_medical_record(patient_id: int, db: Session = Depends(get_db)):
+    medical_card = crud.get_medical_record(db, patient_id)
+    if not medical_card:
+        raise HTTPException(status_code=404, detail="Medical card not found")
+
+    return medical_card
+
+
+@router.put("/patients/{patient_id}/medical-card", response_model=schemas.MedicalRecordResponse)
+def update_medical_card(patient_id: int, updated_medical: schemas.MedicalRecordUpdate, db: Session = Depends(get_db)):
+    # Get the patient to ensure they exist
+    patient = crud.get_patient(db, patient_id=patient_id)
+    if not patient:
+        raise HTTPException(
+            status_code=404,
+            detail="Patient not found"
+        )
+
+    # Get the medical record linked to the patient
+    medical_record = crud.get_medical_record(
+        db, patient.medical_record_id
+    )
+    if not medical_record:
+        raise HTTPException(
+            status_code=404,
+            detail="Medical record not found"
+        )
+
+    # Update the medical record
+    updated_data = updated_medical.dict(exclude_unset=True)
+    updated_medical_record = crud.update_medical_record(
+        db, medical_record.id, updated_data
+    )
+
+    if not updated_medical_record:
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to update medical record"
+        )
+
+    return updated_medical_record
+
+
+@router.get("/consultations/{patient_id}", response_model=List[schemas.ConsultationResponse])
+def get_consultations(patient_id: int, db: Session = Depends(get_db)):
+    # Call the function to retrieve consultations for the given patient_id
+    consultations = crud.get_consultations_by_patient_id(db, patient_id)
+    if not consultations:
+        raise HTTPException(
+            status_code=404, detail="Consultations not found for this patient.")
+
+    return consultations
+
+
 @router.post("/token", response_model=schemas.Token)
 def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = crud.authenticate_user(db, form_data.username, form_data.password)

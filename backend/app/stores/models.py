@@ -64,6 +64,7 @@ class Patient(Base):
 # Модель расписания врачей
 
 
+# TODO: instead date_time make start_time|end_time
 class Schedule(Base):
     __tablename__ = "schedules"
 

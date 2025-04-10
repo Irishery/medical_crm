@@ -52,12 +52,22 @@ function AdminSchedule() {
     const [editedDoctorName, setEditedDoctorName] = useState("");
     const [editedDate, setEditedDate] = useState("");
     const [editedTime, setEditedTime] = useState("");
+    const [isEditingMedicalCard, setIsEditingMedicalCard] = useState(false);
     const [editedAdminComment, setEditedAdminComment] = useState("");
+    const [medicalCardModalIsOpen, setMedicalCardModalIsOpen] = useState(false);
+    const [medicalCardData, setMedicalCardData] = useState(null);
+
 
     useEffect(() => {
         if (selectedEvent) {
-            setEditedPatientName(selectedEvent.patientName);
-            setEditedDoctorName(selectedEvent.doctorName);
+            setEditedPatientName({
+                label: selectedEvent.patientName,
+                value: selectedEvent.patientId, // Ensure patientId is set here
+            });
+            setEditedDoctorName({
+                label: selectedEvent.doctorName,
+                value: selectedEvent.doctorId, // Ensure doctorId is set here
+            });
             setEditedDate(moment(selectedEvent.start).format("YYYY-MM-DD"));
             setEditedTime(moment(selectedEvent.start).format("HH:mm"));
             setEditedAdminComment(selectedEvent.adminComment);
@@ -114,6 +124,7 @@ function AdminSchedule() {
                 start: new Date(schedule.date_time),
                 end: new Date(new Date(schedule.date_time).getTime() + 30 * 60000),
                 doctorId: schedule.doctor.id,
+                patientId: schedule.patient.id,
                 patientName: schedule.patient.full_name,
                 doctorName: schedule.doctor.full_name,
                 adminComment: schedule.comments || "Нет комментариев",
@@ -125,23 +136,88 @@ function AdminSchedule() {
     };
 
 
-    const handleSaveChanges = (e) => {
-        if (e) e.preventDefault();  // Stop form submission
-        // Update event details logic
-        const updatedEvent = {
-            ...selectedEvent,
-            patientName: editedPatientName,
-            doctorName: editedDoctorName,
-            start: new Date(`${editedDate}T${editedTime}`),
-            end: new Date(`${editedDate}T${editedTime}`),
-            adminComment: editedAdminComment,
-        };
+    const handleSaveChanges = async (e) => {
+        if (e && e.preventDefault) {
+            e.preventDefault(); // Prevent form submission if triggered via form
+        }
+        try {
+            const updatedSchedule = {
+                patient_id: editedPatientName?.value, // Use value (id) of the selected patient
+                doctor_id: editedDoctorName?.value,  // Use value (id) of the selected doctor
+                date_time: `${editedDate}T${editedTime}`, // Combine date and time
+                comments: editedAdminComment,
+            };
 
-        setEvents((prevEvents) =>
-            prevEvents.map((event) => (event.id === updatedEvent.id ? updatedEvent : event))
-        );
-        setEditMode(false);  // Turn off edit mode after saving
+            const response = await fetch(`http://127.0.0.1:8000/schedules/${selectedEvent.id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(updatedSchedule),
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error(`Failed to update schedule: ${errorText}`);
+                throw new Error("Failed to update schedule");
+            }
+
+            const result = await response.json();
+            console.log("Schedule updated successfully:", result);
+            // Update events state
+            setEvents((prevEvents) =>
+                prevEvents.map((event) =>
+                    event.id === result.id
+                        ? {
+                            ...event,
+                            title: `Прием: ${result.patient_name}`,
+                            patientName: result.patient_name,
+                            doctorName: result.doctor_name,
+                            start: new Date(result.date_time),
+                            end: new Date(new Date(result.date_time).getTime() + 30 * 60000),
+                            adminComment: result.comments,
+                        }
+                        : event
+                )
+            );
+
+            setModalIsOpen(false);
+            setEditMode(false);
+        } catch (error) {
+            console.error("Error updating schedule:", error);
+            alert("Ошибка при обновлении расписания.");
+        }
     };
+
+    const handleSaveMedicalCard = async () => {
+        try {
+            const response = await fetch(`http://127.0.0.1:8000/patients/${selectedEvent.patientId}/medical-card`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(medicalCardData),
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error(`Failed to update medical card: ${errorText}`);
+                throw new Error("Failed to update medical card");
+            }
+
+            const result = await response.json();
+            console.log("Medical card updated successfully:", result);
+
+            // Refresh the medical card data
+            await fetchMedicalCardData(selectedEvent.patientId);
+            setIsEditingMedicalCard(false);
+        } catch (error) {
+            console.error("Error updating medical card:", error);
+            alert("Ошибка при обновлении медицинской карты.");
+        }
+    };
+
+
 
 
     const filteredEvents = events
@@ -159,13 +235,50 @@ function AdminSchedule() {
 
             // Optional: Fetch events or perform actions related to the selected doctor
             const fetchedEvents = await fetchEventsByDoctor(selectedOption.value);
-            setEvents(fetchedEvents);
+            setEvents(fetchedEvents); urban3purban3purban3p
         } catch (error) {
             console.error("Error handling doctor selection:", error);
         }
     };
 
+    const openMedicalCardModal = async () => {
+        if (selectedEvent?.patientId) {
+            await fetchMedicalCardData(selectedEvent.patientId);
+            setMedicalCardModalIsOpen(true);
+        } else {
+            alert("No patient ID available.");
+        }
+    };
 
+    const closeMedicalCardModal = () => {
+        setMedicalCardModalIsOpen(false);
+        setMedicalCardData(null);
+    };
+
+    // Function to fetch medical card data
+    const fetchMedicalCardData = async (patientId) => {
+        try {
+            const response = await fetch(`http://127.0.0.1:8000/patients/${patientId}/medical-card`);
+            if (!response.ok) throw new Error("Failed to fetch medical card data");
+
+            const data = await response.json();
+
+            // Set medical card data
+            setMedicalCardData(data);
+
+            // Log the full name only after the data has been set
+            console.log("Medical Card Data:", data);
+
+            // Make sure the medicalCardData is populated before trying to access it
+            if (data && data.full_name) {
+                console.log("Full Name:", data.full_name);
+            } else {
+                console.error("Full Name is missing in the fetched data.");
+            }
+        } catch (error) {
+            console.error("Error fetching medical card data:", error);
+        }
+    };
 
 
     const handleEventClick = (event) => {
@@ -261,11 +374,12 @@ function AdminSchedule() {
                                 <AsyncSelect
                                     cacheOptions
                                     loadOptions={fetchPatients}
-                                    defaultOptions={[]}
-                                    value={{ label: editedPatientName, value: selectedEvent?.patientId }}
-                                    onChange={(selected) => setEditedPatientName(selected.label)}
+                                    defaultOptions
+                                    value={editedPatientName} // Set the full object {label, value}
+                                    onChange={(selected) => setEditedPatientName(selected)} // Store the full object
                                     isDisabled={!editMode}
                                 />
+
                             </div>
 
                             {/* ФИО Специалиста */}
@@ -276,11 +390,12 @@ function AdminSchedule() {
                                 <AsyncSelect
                                     cacheOptions
                                     loadOptions={fetchDoctors}
-                                    defaultOptions={[]}
-                                    value={{ label: editedDoctorName, value: selectedEvent?.doctorId }}
-                                    onChange={(selected) => setEditedDoctorName(selected.label)}
+                                    defaultOptions
+                                    value={editedDoctorName} // Set the full object {label, value}
+                                    onChange={(selected) => setEditedDoctorName(selected)} // Store the full object
                                     isDisabled={!editMode}
                                 />
+
                             </div>
 
 
@@ -331,7 +446,7 @@ function AdminSchedule() {
                             <button
                                 type="button"
                                 style={{ color: "#007BFF", background: "none", border: "none", fontSize: "16px", cursor: "pointer" }}
-                                onClick={() => alert("Показать медкарту")}
+                                onClick={openMedicalCardModal}
                             >
                                 Медкарта
                             </button>
@@ -357,6 +472,86 @@ function AdminSchedule() {
                         </div>
                     </form>
                 )}
+            </Modal>
+            {/* Medical Card Modal */}
+            <Modal
+                isOpen={medicalCardModalIsOpen}
+                onRequestClose={closeMedicalCardModal}
+                style={{
+                    overlay: {
+                        backgroundColor: "rgba(0, 0, 0, 0.5)",
+                        zIndex: 1001,
+                    },
+                    content: {
+                        maxWidth: "800px",
+                        margin: "auto",
+                        borderRadius: "12px",
+                        padding: "20px",
+                    },
+                }}
+            >
+                <h2 className="modal-title">Медкарта</h2>
+                {medicalCardData ? (
+                    <div>
+                        {/* Patient Information */}
+                        <p>ФИО пациента: {isEditingMedicalCard ?
+                            <input type="text" value={medicalCardData.full_name} onChange={(e) => setMedicalCardData(prev => ({ ...prev, full_name: e.target.value }))} className="modal-input" /> :
+                            medicalCardData.full_name}</p>
+                        <p>Пол: {isEditingMedicalCard ?
+                            <input type="text" value={medicalCardData.gender} onChange={(e) => setMedicalCardData(prev => ({ ...prev, gender: e.target.value }))} className="modal-input" /> :
+                            medicalCardData.gender}</p>
+                        <p>Серия и номер полиса ОМС: {isEditingMedicalCard ?
+                            <input type="text" value={medicalCardData.oms_number} onChange={(e) => setMedicalCardData(prev => ({ ...prev, oms_number: e.target.value }))} className="modal-input" /> :
+                            medicalCardData.insurance_series_number}</p>
+                        <p>Код льготы: {isEditingMedicalCard ?
+                            <input type="text" value={medicalCardData.benefit_code} onChange={(e) => setMedicalCardData(prev => ({ ...prev, benefit_code: e.target.value }))} className="modal-input" /> :
+                            medicalCardData.benefit_code}</p>
+
+                        {/* List of Diagnoses */}
+                        <h3>Список заболеваний</h3>
+                        {/* {isEditingMedicalCard ?
+                            <textarea value={medicalCardData.diseases} onChange={(e) => setMedicalCardData(prev => ({ ...prev, diseases: e.target.value }))} className="modal-textarea"></textarea> :
+                            <p>{medicalCardData.diseases}</p>} */}
+
+                        {/* Medical History Table */}
+                        {/* <h3>История приемов</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Диагноз</th>
+                                    <th>ФИО врача</th>
+                                    <th>Дата</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {medicalCardData.history.map((entry, index) => (
+                                    <tr key={index}>
+                                        <td>{entry.diagnosis}</td>
+                                        <td>{entry.doctor_name}</td>
+                                        <td>{entry.date}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table> */}
+
+                        {/* Buttons */}
+                        <button onClick={() => setIsEditingMedicalCard(!isEditingMedicalCard)} className="btn-edit-medical">
+                            {isEditingMedicalCard ? "Отменить редактирование" : "Редактировать"}
+                        </button>
+                        {isEditingMedicalCard && (
+                            <button onClick={handleSaveMedicalCard} className="btn-save-medical">Сохранить</button>
+                        )}
+                    </div>
+                ) : (
+                    <p>Загрузка...</p>
+                )}
+                <button
+                    type="button"
+                    onClick={closeMedicalCardModal}
+                    className="btn-close-modal"
+                >
+                    Закрыть
+                </button>
             </Modal>
 
 

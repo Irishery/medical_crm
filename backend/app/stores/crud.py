@@ -1,4 +1,5 @@
 # crud.py
+from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 from jose import jwt
 from sqlalchemy import extract
@@ -274,6 +275,48 @@ def get_schedules(db: Session, skip: int = 0, limit: int = 10):
         )
 
     return schedules
+
+
+def get_schedule(db: Session, schedule_id: int):
+    return db.query(models.Schedule).filter(models.Schedule.id == schedule_id).first()
+
+
+def update_schedule(db: Session, schedule_id: int, schedule: schemas.ScheduleUpdate):
+    db_schedule = db.query(models.Schedule).filter(
+        models.Schedule.id == schedule_id).first()
+    if db_schedule:
+        for key, value in schedule.dict().items():
+            setattr(db_schedule, key, value)
+        db.commit()
+        db.refresh(db_schedule)
+    return db_schedule
+
+
+def get_medical_record(db: Session, medical_record_id: int):
+    return db.query(models.MedicalRecord).filter(models.MedicalRecord.id == medical_record_id).first()
+
+
+def update_medical_record(db: Session, medical_record_id: int, medical_record: schemas.MedicalRecordUpdate):
+    db_medical_record = db.query(models.MedicalRecord).filter(
+        models.MedicalRecord.id == medical_record_id).first()
+    if db_medical_record:
+        for key, value in medical_record.dict().items():
+            setattr(db_medical_record, key, value)
+        db.commit()
+        db.refresh(db_medical_record)
+    return db_medical_record
+
+
+# Function to get consultations by patient id
+
+
+def get_consultations_by_patient_id(db: Session, patient_id: int):
+    # Query the Consultation table to find all consultations with the provided patient_id
+    consultations = db.query(models.Consultation).filter(
+        models.Consultation.patient_id == patient_id).all()
+
+    # Return a list of ConsultationResponse Pydantic models from the query results
+    return [schemas.ConsultationResponse.from_orm(consultation) for consultation in consultations]
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
