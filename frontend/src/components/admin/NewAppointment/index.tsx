@@ -69,8 +69,7 @@ const NewAppointmentContent = () => {
                     </form>
                 </FormProvider>
 
-                <div className="flex justify-between">
-                    <Button type="button">Медкарта</Button>
+                <div className="flex justify-end">
                     <Button form="new_appointment_form" type="submit">
                         Добавить
                     </Button>

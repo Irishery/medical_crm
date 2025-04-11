@@ -11,7 +11,7 @@ const FormItem = ({ name, ...props }: ComponentProps<any>) => {
     const form = useFormContext()
     const errors = form.formState.errors
     const message = errors[name]?.message
-
+    console.log({ message })
     return (
         <div className="grid gap-2">
             {props.children}
