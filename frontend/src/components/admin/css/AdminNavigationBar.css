@@ -28,6 +28,7 @@
     margin: 0;
     font-size: 1.2rem;
     color: #333;
+    text-align: left;
 }
 
 .admin-info .admin-role {
@@ -58,6 +59,6 @@
 
 .admin-nav-menu li a.active,
 .admin-nav-menu li a:hover {
-    background-color: #E8EDF2;
-    color: #0D141C;
+    background-color: #e8edf2;
+    color: #0d141c;
 }

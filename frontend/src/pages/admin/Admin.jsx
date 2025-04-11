@@ -7,6 +7,7 @@ import AdminProfile from "./AdminProfile";
 import AdminSchedule from "./AdminSchedule";
 import AdminPatients from "./AdminPatients";
 import AdminDoctors from "./AdminDoctors";
+import NewPatient from "../../components/admin/NewPatient";
 
 import "./css/Admin.css";
 
@@ -14,7 +15,7 @@ function Admin() {
     return (
         <div id="admin-container">
             <AdminNavigationBar />
-            <div id="page-container">
+            <div id="page-container" className="container pt-5">
                 <Routes>
                     {/* <Route path="/profile" element={<AdminProfile />} /> */}
                     <Route path="schedule" element={<AdminSchedule />} />

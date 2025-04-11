@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableRow, TablePagination, Button, TextField } from '@mui/material';
-import "./css/AdminDoctors.css";
-
+import "./style.css";
+import Edit from './Edit'
 const DoctorDatabase = () => {
   const [doctors, setDoctors] = useState([]);
   const [totalDoctors, setTotalDoctors] = useState(0);
@@ -61,7 +61,7 @@ const DoctorDatabase = () => {
               <TableCell>{doctor.full_name}</TableCell>
               <TableCell>{doctor.speciality}</TableCell>
               <TableCell>
-                <Button variant="text" className="edit-button">Edit</Button>
+                <Edit/>
               </TableCell>
             </TableRow>
           ))}

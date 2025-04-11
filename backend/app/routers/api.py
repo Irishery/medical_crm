@@ -112,19 +112,8 @@ def get_patient(patient_id: int, db: Session = Depends(get_db)):
     if patient is None:
         raise HTTPException(status_code=404, detail="Пациент не найден")
     return patient
-
-
-@router.post("/patients/", response_model=schemas.PatientResponse)
-def create_patient(patient: schemas.PatientCreate, db: Session = Depends(get_db)):
-    return crud.create_patient(db=db, patient=patient)
-
-
-@router.delete("/patients/{patient_id}", response_model=schemas.PatientResponse)
-def delete_patient(patient_id: int, db: Session = Depends(get_db)):
-    patient = crud.get_patient(db, patient_id=patient_id)
-    if patient is None:
-        raise HTTPException(status_code=404, detail="Пациент не найден")
-    crud.delete_patient(db=db, patient_id=patient_id)
+    logger.debug("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaaa")
+rud.delete_patient(db=db, patient_id=patient_id)
     return {"message": "Пациент удалён"}
 
 # CRUD для приёмов
