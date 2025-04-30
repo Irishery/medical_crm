@@ -1,10 +1,11 @@
-import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import React from 'react'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
-import Admin from "./admin/Admin"; // Admin dashboard
-import Doctor from "./doctor/Doctor"; // Doctor dashboard
-import Login from "./login/Login"; // Login page
-import ProtectedRoute from "../components/ProtectedRoute"; // Protected route
+import Admin from './admin/Admin' // Admin dashboard
+import Doctor from './doctor/Doctor' // Doctor dashboard
+import Login from './login/Login' // Login page
+import ProtectedRoute from '../components/ProtectedRoute' // Protected route
+import DoctorSchedule from './doctor/Schedule'
 
 function App() {
     return (
@@ -17,15 +18,17 @@ function App() {
                 <Route
                     path="/admin/*"
                     element={
-                        <ProtectedRoute allowedRoles={["admin"]}>
+                        <ProtectedRoute allowedRoles={['admin']}>
                             <Admin />
                         </ProtectedRoute>
                     }
                 />
+                <Route path="/doctor-schedule/*" element={<DoctorSchedule />} />
+
                 <Route
                     path="/doctor/*"
                     element={
-                        <ProtectedRoute allowedRoles={["doctor"]}>
+                        <ProtectedRoute allowedRoles={['doctor']}>
                             <Doctor />
                         </ProtectedRoute>
                     }
@@ -35,7 +38,7 @@ function App() {
                 <Route path="*" element={<div>Page not found</div>} />
             </Routes>
         </BrowserRouter>
-    );
+    )
 }
 
-export default App;
+export default App

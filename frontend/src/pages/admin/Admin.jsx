@@ -1,15 +1,17 @@
-import React from "react";
-import { Routes, Route } from "react-router-dom";
+import React from 'react'
+import { Routes, Route } from 'react-router-dom'
 
-import AdminNavigationBar from "../../components/admin/AdminNavigationBar";
+import AdminNavigationBar from '../../components/admin/AdminNavigationBar'
 
-import AdminProfile from "./AdminProfile";
-import AdminSchedule from "./AdminSchedule";
-import AdminPatients from "./AdminPatients";
-import AdminDoctors from "./AdminDoctors";
-import NewPatient from "../../components/admin/NewPatient";
+import AdminProfile from './AdminProfile'
+import AdminSchedule from './AdminSchedule'
+import AdminPatients from './AdminPatients'
+import AdminDoctors from './AdminDoctors'
+// fuk it
+import DoctorSchedule from '../doctor/Schedule/'
+import NewPatient from '../../components/admin/NewPatient'
 
-import "./css/Admin.css";
+import './css/Admin.css'
 
 function Admin() {
     return (
@@ -21,11 +23,12 @@ function Admin() {
                     <Route path="schedule" element={<AdminSchedule />} />
                     <Route path="patients" element={<AdminPatients />} />
                     <Route path="doctors" element={<AdminDoctors />} />
+
                     <Route path="*" element={<div>Page not found</div>} />
                 </Routes>
             </div>
         </div>
-    );
+    )
 }
 
-export default Admin;
+export default Admin

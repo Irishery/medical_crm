@@ -11,7 +11,7 @@ import TableRow from '@mui/material/TableRow'
 import Paper from '@mui/material/Paper'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { schema } from './schema'
-import FormItem from '../../../shared/FormItem'
+import FormItem from '../../shared/FormItem'
 import { fetchMedicalCardData } from './fetchMedicalCardData'
 import { z } from 'zod'
 

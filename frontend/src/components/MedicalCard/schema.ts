@@ -1,4 +1,9 @@
-import { fullnameSchema, genderSchema, passportSchema, polisSchema } from '../../../shared/patterns'
+import {
+    fullnameSchema,
+    genderSchema,
+    passportSchema,
+    polisSchema,
+} from '../../shared/patterns'
 import { z } from 'zod'
 
 export const schema = z.object({

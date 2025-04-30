@@ -9,7 +9,7 @@ import {
     Button,
     TextField,
 } from '@mui/material'
-import MedicalCard from './MedicalCard'
+import MedicalCard from '../../components/MedicalCard'
 import './css/AdminPatients.css'
 
 function AdminPatients() {
