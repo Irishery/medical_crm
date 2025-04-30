@@ -206,7 +206,7 @@ const MedicalCard = (props: Props) => {
             <Modal
                 open={open}
                 onClose={() => setOpen(false)}
-                className="flex items-center justify-center"
+                className="flex items-center justify-center bg-white"
             >
                 <MedicalCardContent patientId={props.patientId} />
             </Modal>

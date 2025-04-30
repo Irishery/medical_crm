@@ -1,12 +1,14 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Calendar, momentLocalizer } from 'react-big-calendar'
 import moment from 'moment'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
+import Select from 'react-select'
 import Modal from 'react-modal'
+import './style.css' // Custom CSS for styling improvements
 import AsyncSelect from 'react-select/async'
 import MedicalCard from '../../../components/MedicalCard'
+import NewPatient from '../../../components/admin/NewPatient'
 import useUser from '../../../components/useUser'
-import useDoctor from '../useDoctor'
 // Function to fetch data from API
 
 const localizer = momentLocalizer(moment)
@@ -20,7 +22,7 @@ const inputStyle = {
     backgroundColor: '#f9f9f9',
 }
 
-function DoctorSchedule() {
+function AdminSchedule() {
     const [selectedDoctor, setSelectedDoctor] = useState(null)
     const [events, setEvents] = useState([])
     const [modalIsOpen, setModalIsOpen] = useState(false)
@@ -33,8 +35,6 @@ function DoctorSchedule() {
     const [editedAdminComment, setEditedAdminComment] = useState('')
     const [currentMonth, setCurrentMonth] = useState(moment().format('YYYY-MM')) // New state for current month
     const user = useUser()
-    const doctors = useDoctor()
-    console.log({ user })
 
     useEffect(() => {
         if (selectedEvent) {
@@ -471,4 +471,4 @@ function DoctorSchedule() {
     )
 }
 
-export default DoctorSchedule
+export default AdminSchedule

@@ -23,7 +23,7 @@ function App() {
                         </ProtectedRoute>
                     }
                 />
-                <Route path="/doctor-schedule/*" element={<DoctorSchedule />} />
+                {/* <Route path="/doctor-schedule/*" element={<DoctorSchedule />} /> */}
 
                 <Route
                     path="/doctor/*"
@@ -33,6 +33,15 @@ function App() {
                         </ProtectedRoute>
                     }
                 />
+
+                {/* <Route
+                    path="/doctor/*"
+                    element={
+                        <Routes>
+                            <Route path="hui" element={<h1>hui</h1>}></Route>
+                        </Routes>
+                    }
+                ></Route> */}
 
                 {/* Fallback */}
                 <Route path="*" element={<div>Page not found</div>} />
