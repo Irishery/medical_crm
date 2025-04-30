@@ -34,6 +34,9 @@ function Login() {
                 // Decode the token to extract the role
                 const decodedToken = jwtDecode(token);
                 const userRole = decodedToken.role;
+                const userID = decodedToken.id;
+                console.log(userID)
+                console.log(decodedToken)
 
                 // Redirect based on the role
                 if (userRole === "admin") {
@@ -42,6 +45,7 @@ function Login() {
                     navigate("/doctor");
                 } else {
                     console.log(decodedToken)
+                    console.log(userRole)
                     console.log("Unknown role:", userRole);
                     setError("Unknown role. Please contact support.");
                 }

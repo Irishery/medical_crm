@@ -96,7 +96,7 @@ def delete_doctor(doctor_id: int, db: Session = Depends(get_db)):
 
 
 @router.get("/patients/", response_model=List[schemas.PatientResponse])
-def get_doctors(
+def get_patients(
     skip: int = 0,
     limit: int = 10,
     search: Optional[str] = None,
@@ -106,14 +106,17 @@ def get_doctors(
     return patients
 
 
-@router.get("/patients/{patient_id}", response_model=schemas.PatientResponse)
-def get_patient(patient_id: int, db: Session = Depends(get_db)):
+@router.post("/patients/", response_model=schemas.PatientResponse)
+def create_patient(patient: schemas.PatientCreate, db: Session = Depends(get_db)):
+    return crud.create_patient(db=db, patient=patient)
+
+
+@router.delete("/patients/{patient_id}", response_model=schemas.PatientResponse)
+def delete_patient(patient_id: int, db: Session = Depends(get_db)):
     patient = crud.get_patient(db, patient_id=patient_id)
     if patient is None:
         raise HTTPException(status_code=404, detail="Пациент не найден")
-    return patient
-    logger.debug("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaaa")
-rud.delete_patient(db=db, patient_id=patient_id)
+    crud.delete_patient(db=db, patient_id=patient_id)
     return {"message": "Пациент удалён"}
 
 # CRUD для приёмов
@@ -279,7 +282,7 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db:
     logger.debug("-------------------------")
     logger.debug(user.role.value)
     access_token = crud.create_access_token(
-        data={"sub": user.username, "role": user.role.value})
+        data={"sub": user.username, "role": user.role.value, "user_id": user.id})
     logger.debug("------------------------")
     return {"access_token": access_token, "token_type": "bearer"}
 
