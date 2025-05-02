@@ -51,6 +51,14 @@ def delete_user(user_id: int, db: Session = Depends(get_db)):
     crud.delete_user(db=db, user_id=user_id)
     return {"message": "Пользователь удалён"}
 
+
+@router.get("/users/{username}/", response_model=schemas.UserResponse)
+def read_user_by_username(username: str, db: Session = Depends(get_db)):
+    db_user = crud.get_user_by_username(db, username=username)
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="Пользователь не найден")
+    return db_user
+
 # CRUD для врачей с сортировкой
 
 
@@ -82,6 +90,14 @@ def get_doctors(
 ):
     doctors = crud.get_doctors(db, skip=skip, limit=limit, search=search)
     return doctors
+
+
+@router.get("/doctors/{username}/", response_model=schemas.DoctorResponse)
+def get_doctor_by_username(username: str, db: Session = Depends(get_db)):
+    doctor = crud.get_doctor_by_username(db, username=username)
+    if doctor is None:
+        raise HTTPException(status_code=404, detail="Врач не найден")
+    return doctor
 
 
 @router.delete("/doctors/{doctor_id}", response_model=schemas.DoctorResponse)
