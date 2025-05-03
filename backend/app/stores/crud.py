@@ -348,7 +348,7 @@ def update_medical_record(db: Session, medical_record_id: int, medical_record: s
     db_medical_record = db.query(models.MedicalRecord).filter(
         models.MedicalRecord.id == medical_record_id).first()
     if db_medical_record:
-        for key, value in medical_record.dict().items():
+        for key, value in medical_record.dict(exclude_unset=True).items():
             setattr(db_medical_record, key, value)
         db.commit()
         db.refresh(db_medical_record)

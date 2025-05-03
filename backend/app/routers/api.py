@@ -286,7 +286,7 @@ def update_medical_card(patient_id: int, updated_medical: schemas.MedicalRecordU
         )
 
     # Update the medical record
-    updated_data = updated_medical.dict(exclude_unset=True)
+    updated_data = updated_medical
     updated_medical_record = crud.update_medical_record(
         db, medical_record.id, updated_data
     )
