@@ -39,7 +39,10 @@ const NewPatientContent = () => {
 
                         <FormItem name="contact_info">
                             <label htmlFor="contact_info">Номер телефона</label>
-                            <Input {...form.register('contact_info')} />
+                            <Input
+                                type="tel"
+                                {...form.register('contact_info')}
+                            />
                         </FormItem>
                     </form>
                 </FormProvider>

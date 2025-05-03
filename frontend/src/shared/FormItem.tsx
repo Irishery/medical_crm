@@ -13,7 +13,7 @@ const FormItem = ({ name, ...props }: ComponentProps<any>) => {
     const message = errors[name]?.message
     console.log({ message })
     return (
-        <div className="grid gap-2">
+        <div className="grid gap-2" {...props}>
             {props.children}
             <ErrorMessage>
                 {getErrorMessage(message as any as string)}

@@ -1,16 +1,18 @@
 import useUser from '../../../src/components/useUser'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 
 const useDoctor = () => {
+    const [doctor, setDoctor] = useState<Record<string, string> | null>(null)
     const user = useUser()
 
     useEffect(() => {
-        fetch('localhost:8000/doctors?limit=100')
-            .then((res) => res.json())
-            .then((doctors) => console.log({ doctors }))
+        if (user)
+            fetch(`http://127.0.0.1:8000/doctors/${user.sub}/`)
+                .then((res) => res.json())
+                .then((doctor) => setDoctor(doctor))
     }, [user])
 
-    return {}
+    return doctor
 }
 
 export default useDoctor

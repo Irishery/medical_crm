@@ -1,9 +1,8 @@
 import { Routes, Route } from 'react-router-dom'
-import DoctorSchedule from './DoctorSchedule'
+import DoctorSchedule from './Schedule'
 import DoctorPatients from './DoctorPatients'
 import DoctorMedicalCard from './DoctorMedicalCard'
 import NavigationBar from './NavigationBar'
-import AdminSchedule from './AdminSchedule'
 import Consultations from './Consultations'
 
 function Doctor() {
@@ -12,7 +11,8 @@ function Doctor() {
             <NavigationBar />
             <div id="page-container" className="container pt-5">
                 <Routes>
-                    <Route path="schedule" element={<AdminSchedule />} />
+                    <Route path="schedule" element={<DoctorSchedule />} />
+                    {/* <Route path="schedule" element={<AdminSchedule />} /> */}
                     {/* <Route path="schedule" element={<div>hello2</div>} /> */}
                     <Route path="patients" element={<DoctorPatients />} />
                     <Route path="consultations" element={<Consultations />} />

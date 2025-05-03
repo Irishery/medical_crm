@@ -54,7 +54,7 @@ const Form = ({ handleSubmit, ...props }: Props) => {
 
                         <FormItem name="phone">
                             <label htmlFor="phone">Номер телефона</label>
-                            <Input {...form.register('phone')} />
+                            <Input type="tel" {...form.register('phone')} />
                         </FormItem>
 
                         <FormItem name="diagnosis">
