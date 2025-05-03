@@ -17,7 +17,7 @@ function AdminPatients() {
     const [page, setPage] = useState(0)
     const [rowsPerPage, setRowsPerPage] = useState(10)
     const [searchTerm, setSearchTerm] = useState('')
-
+    console.log(patients, totalPatients)
     useEffect(() => {
         fetchPatients()
     }, [page, rowsPerPage, searchTerm])
@@ -26,15 +26,11 @@ function AdminPatients() {
         try {
             const skip = page * rowsPerPage
             const response = await fetch(
-                `http://127.0.0.1:8000/patients?skip=${skip}&limit=${rowsPerPage}&search=${searchTerm}`
+                `http://127.0.0.1:8000/patients_v2?skip=${skip}&limit=${rowsPerPage}&search=${searchTerm}`
             )
             const data = await response.json()
-            if (Array.isArray(data)) {
-                console.log(data)
-                console.log(searchTerm)
-                setPatients(data)
-                setTotalPatients(data.length)
-            }
+            setPatients(data.patients)
+            setTotalPatients(data.total)
         } catch (error) {
             console.error('Error fetching patients:', error)
         }
@@ -79,7 +75,7 @@ function AdminPatients() {
             <TablePagination
                 rowsPerPageOptions={[5, 10]}
                 component="div"
-                count={Infinity}
+                count={totalPatients}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={(event, newPage) => setPage(newPage)}

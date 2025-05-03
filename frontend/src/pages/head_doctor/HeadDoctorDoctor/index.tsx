@@ -10,6 +10,7 @@ import {
     TextField,
 } from '@mui/material'
 import MedicalCard from '../../components/MedicalCard'
+import Profile from './Profile'
 
 function AdminPatients() {
     const [patients, setPatients] = useState([])
@@ -26,10 +27,11 @@ function AdminPatients() {
         try {
             const skip = page * rowsPerPage
             const response = await fetch(
-                `http://127.0.0.1:8000/patients_v2?skip=${skip}&limit=${rowsPerPage}&search=${searchTerm}`
+                `http://127.0.0.1:8000/doctors_v2?skip=${skip}&limit=${rowsPerPage}&search=${searchTerm}`
             )
             const data = await response.json()
-            setPatients(data.patients)
+            console.log(data)
+            setPatients(data.doctors)
             setTotalPatients(data.total)
         } catch (error) {
             console.error('Error fetching patients:', error)
@@ -43,7 +45,7 @@ function AdminPatients() {
 
     return (
         <div className="container">
-            <h1 className="title">База пациентов</h1>
+            <h1 className="title">База Врачей</h1>
             <TextField
                 variant="outlined"
                 placeholder="Искать по ФИО/контактам/специализации"
@@ -55,9 +57,9 @@ function AdminPatients() {
             <Table>
                 <TableHead>
                     <TableRow>
-                        <TableCell>Patient</TableCell>
-                        <TableCell>Contact</TableCell>
-                        <TableCell>Medical Record</TableCell>
+                        <TableCell>Доктор</TableCell>
+                        <TableCell>Контакты</TableCell>
+                        <TableCell>Профиль</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -66,7 +68,7 @@ function AdminPatients() {
                             <TableCell>{patient.full_name}</TableCell>
                             <TableCell>{patient.contact_info}</TableCell>
                             <TableCell>
-                                <MedicalCard patientId={patient.id} />
+                                <Profile doctorId={patient.id} />
                             </TableCell>
                         </TableRow>
                     ))}
