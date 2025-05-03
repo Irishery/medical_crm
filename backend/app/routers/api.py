@@ -92,6 +92,19 @@ def get_doctors(
     return doctors
 
 
+@router.get("/doctors_v2/", response_model=schemas.DoctorResponseTable)
+def get_doctors_v2(
+    skip: int = 0,
+    limit: int = 10,
+    search: Optional[str] = None,
+    db: Session = Depends(get_db)
+):
+
+    doctors, total = crud.get_doctors_v2(
+        db, skip=skip, limit=limit, search=search)
+    return {"doctors": doctors, "total": total}
+
+
 @router.get("/doctors/{username}/", response_model=schemas.DoctorResponse)
 def get_doctor_by_username(username: str, db: Session = Depends(get_db)):
     doctor = crud.get_doctor_by_username(db, username=username)
@@ -120,6 +133,19 @@ def get_patients(
 ):
     patients = crud.get_patients(db, skip=skip, limit=limit, search=search)
     return patients
+
+
+@router.get("/patients_v2/", response_model=schemas.PatientResponseTable)
+def get_patients_v2(
+    skip: int = 0,
+    limit: int = 10,
+    search: Optional[str] = None,
+    db: Session = Depends(get_db)
+):
+
+    patients, total = crud.get_patients_v2(
+        db, skip=skip, limit=limit, search=search)
+    return {"patients": patients, "total": total}
 
 
 @router.post("/patients/", response_model=schemas.PatientResponse)

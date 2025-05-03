@@ -62,6 +62,28 @@ def get_doctors(db: Session, skip: int = 0, limit: int = 10, search: str = None)
     return query.offset(skip).limit(limit).all()
 
 
+def get_doctors_v2(db: Session, skip: int = 0, limit: int = 10, search: str = None):
+    query = db.query(models.Doctor)
+
+    if search:
+        # Split search string into tokens and create a prefix query
+        search_tokens = search.split()
+        search_query = " & ".join([f"{token}:*" for token in search_tokens])
+
+        # Generate search vector and tsquery
+        search_vector = func.to_tsvector(
+            "russian", models.Doctor.full_name + ' ' + models.Doctor.speciality)
+        ts_query = func.to_tsquery("russian", search_query)
+
+        # Filter and sort by relevance
+        query = query.filter(search_vector.op("@@")(ts_query))
+        query = query.order_by(desc(func.ts_rank(search_vector, ts_query)))
+
+    total = query.count()
+
+    return query.offset(skip).limit(limit).all(), total
+
+
 def delete_doctor(db: Session, doctor_id: int):
     db.query(models.Doctor).filter(models.Doctor.id == doctor_id).delete()
     db.commit()
@@ -95,6 +117,28 @@ def get_patients(db: Session, skip: int = 0, limit: int = 10, search: str = None
         query = query.order_by(desc(func.ts_rank(search_vector, ts_query)))
 
     return query.offset(skip).limit(limit).all()
+
+
+def get_patients_v2(db: Session, skip: int = 0, limit: int = 10, search: str = None):
+    query = db.query(models.Patient)
+
+    if search:
+        # Split search string into tokens and create a prefix query
+        search_tokens = search.split()
+        search_query = " & ".join([f"{token}:*" for token in search_tokens])
+
+        # Generate search vector and tsquery
+        search_vector = func.to_tsvector(
+            "russian", models.Patient.full_name + ' ' + models.Patient.contact_info)
+        ts_query = func.to_tsquery("russian", search_query)
+
+        # Filter and sort by relevance
+        query = query.filter(search_vector.op("@@")(ts_query))
+        query = query.order_by(desc(func.ts_rank(search_vector, ts_query)))
+
+    total = query.count()
+
+    return query.offset(skip).limit(limit).all(), total
 
 
 def create_patient(db: Session, patient: schemas.PatientCreate):

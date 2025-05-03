@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 from enum import Enum
 
@@ -57,6 +57,11 @@ class DoctorResponse(DoctorBase):
         orm_mode = True
 
 
+class DoctorResponseTable(BaseModel):
+    doctors: List[DoctorResponse]
+    total: int
+
+
 class AdminBase(BaseModel):
     user_id: int
     full_name: str
@@ -94,6 +99,12 @@ class PatientResponse(PatientBase):
 
     class Config:
         orm_mode = True
+
+
+class PatientResponseTable(BaseModel):
+    patients: List[PatientResponse]
+    total: int
+
 
 # Базовая модель приёма
 
