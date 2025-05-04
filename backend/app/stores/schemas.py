@@ -236,6 +236,9 @@ class ConsultationBase(BaseModel):
 
 
 class ConsultationCreate(ConsultationBase):
+    doctor_id: int
+    patient_id: int
+    medical_record_id: int
     pass
 
 

@@ -378,7 +378,7 @@ def update_medical_card(patient_id: int, updated_medical: schemas.MedicalRecordU
     return updated_medical_record
 
 
-@router.get("/consultations/{patient_id}", response_model=List[schemas.ConsultationResponse])
+@router.get("/consultations/{consultation_id}", response_model=List[schemas.ConsultationResponse])
 def get_consultations(patient_id: int, db: Session = Depends(get_db)):
     # Call the function to retrieve consultations for the given patient_id
     consultations = crud.get_consultations_by_patient_id(db, patient_id)
