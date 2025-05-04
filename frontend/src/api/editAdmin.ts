@@ -4,16 +4,16 @@ interface Dto {
     full_name: string
 }
 
-export const createAdmin = async (dto: Dto) => {
-    const response = await fetch(`http://127.0.0.1:8000/admin/`, {
-        method: 'POST',
+export const editAdmin = async (id: number, dto: Partial<Dto>) => {
+    const response = await fetch(`http://127.0.0.1:8000/admin/${id}`, {
+        method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify(dto),
     })
 
-    if (!response.ok) throw new Error('Failed to create admin')
+    if (!response.ok) throw new Error('Failed to edit admin')
 
     return await response.json()
 }

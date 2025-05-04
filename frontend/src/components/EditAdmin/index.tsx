@@ -3,15 +3,18 @@ import { Box, Button, Modal, TextareaAutosize } from '@mui/material'
 import {
     Controller,
     FormProvider,
+    SubmitHandler,
     useForm,
     useFormState,
 } from 'react-hook-form'
 import { Input } from '@mui/material'
-import { PhoneInput } from '@/shared/FormItems'
 import FormItem from '@/shared/FormItem'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { schema } from './schema'
-import { fetchDoctor } from '@/api/fetchDoctor'
+import { fetchAdmin } from '@/api/fetchAdmin'
+import { editAdmin } from '@/api/editAdmin'
+import { z } from 'zod'
+import { toast } from 'mui-sonner'
 
 const EditButton = (props: ComponentProps<typeof Button>) => {
     return (
@@ -27,21 +30,22 @@ const EditContent = ({ id }: { id: number }) => {
     useEffect(() => {
         if (!id) return
 
-        fetchDoctor(id).then((data) => {
+        fetchAdmin(id).then((data) => {
             form.reset({
                 full_name: data.full_name,
                 phone_number: data.contact_info,
-                speciality: data.speciality,
-                //     gender: data.gender,
-                //     identity_document: data.identity_document,
-                //     insurance_series_number: data.insurance_series_number,
-                //     benefit_code: data.benefit_code,
-                //     diseases: data.diseases,
             })
         })
     }, [id])
 
-    const onSubmit = (data: Record<string, string>) => {}
+    const onSubmit: SubmitHandler<z.infer<typeof schema>> = async (data) => {
+        try {
+            await editAdmin(id, data)
+            toast.success('Данные обновлены')
+        } catch (e) {
+            toast.error('Не удалось изменить данные')
+        }
+    }
 
     return (
         <div className="h-4/6 w-4/6 overflow-scroll rounded-md bg-white px-5 py-6 shadow-md">
@@ -61,13 +65,6 @@ const EditContent = ({ id }: { id: number }) => {
                             <FormItem name="full_name">
                                 <label htmlFor="full_name">ФИО</label>
                                 <Input {...form.register('full_name')} />
-                            </FormItem>
-
-                            <FormItem name="speciality">
-                                <label htmlFor="speciality">
-                                    Специализация
-                                </label>
-                                <Input {...form.register('speciality')} />
                             </FormItem>
 
                             <FormItem name="phone_number">

@@ -1,10 +1,28 @@
 import React, { ComponentProps, useState } from 'react'
 import { Button, Modal, TextareaAutosize } from '@mui/material'
-import { FormProvider, useForm } from 'react-hook-form'
+import {
+    Controller,
+    FormProvider,
+    SubmitHandler,
+    useForm,
+} from 'react-hook-form'
 import { Input } from '@mui/material'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { schema } from './schema'
 import FormItem from '../../../shared/FormItem'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import { TimeField } from '@mui/x-date-pickers/TimeField'
+import dayjs from 'dayjs'
+import { DateField } from '@mui/x-date-pickers'
+import DatePickerForm from '@/shared/DatePickerForm'
+import TimeFieldForm from '@/shared/TimeFieldForm'
+import DoctorInput, { DoctorInputForm } from '@/shared/DoctorInput'
+import { PatientInputForm } from '@/shared/PatientInput'
+import { z } from 'zod'
+import { createSchedule } from '@/api/createSchedule'
+import { toast } from 'mui-sonner'
 
 const NewAppointmentButton = (props: ComponentProps<typeof Button>) => {
     return (
@@ -16,10 +34,29 @@ const NewAppointmentButton = (props: ComponentProps<typeof Button>) => {
 const NewAppointmentContent = () => {
     const form = useForm({ resolver: zodResolver(schema) })
 
-    const onSubmit = (data: Record<string, string>) => {}
+    const onSubmit: SubmitHandler<z.infer<typeof schema>> = async (data) => {
+        try {
+            const [day, month, year] = data.date.split('.').map(Number)
+            const [hours, minutes] = data.time.split(':').map(Number)
+            const dateTime = new Date(
+                Date.UTC(year, month - 1, day, hours, minutes, 0, 0)
+            )
+            const isoString = dateTime.toISOString()
+
+            await createSchedule({
+                doctor_id: data.specialist_name.value,
+                patient_id: data.name.value,
+                comments: data.comment,
+                date_time: isoString,
+            })
+            toast.success('Запись создана')
+        } catch (e) {
+            toast.error('Не удалось создать запись')
+        }
+    }
 
     return (
-        <div className="h-3/5 w-4/6 overflow-scroll rounded-md bg-white px-5 py-6 shadow-md">
+        <div className="h-4/6 w-4/6 overflow-auto rounded-md bg-white px-5 py-6 shadow-md">
             <div className="flex h-full flex-col gap-10">
                 <h3 className="text-left text-lg">Новый прием</h3>
                 <FormProvider {...form}>
@@ -31,7 +68,7 @@ const NewAppointmentContent = () => {
                         <div className="grid grid-flow-col grid-cols-2 grid-rows-4 gap-5">
                             <FormItem name="name">
                                 <label htmlFor="name">ФИО</label>
-                                <Input {...form.register('name')} />
+                                <PatientInputForm name="name" />
                             </FormItem>
 
                             <FormItem name="phone">
@@ -41,22 +78,19 @@ const NewAppointmentContent = () => {
 
                             <FormItem name="date">
                                 <label htmlFor="date">Дата</label>
-                                <Input {...form.register('date')} />
+                                <DatePickerForm name="date" />
                             </FormItem>
 
                             <FormItem name="time">
                                 <label htmlFor="time">Время</label>
-                                <Input
-                                    {...form.register('time')}
-                                    placeholder="13:20"
-                                />
+                                <TimeFieldForm name="time" />
                             </FormItem>
 
                             <FormItem name="specialist_name">
                                 <label htmlFor="specialist_name">
                                     Фио специалиста
                                 </label>
-                                <Input {...form.register('specialist_name')} />
+                                <DoctorInputForm name="specialist_name" />
                             </FormItem>
                             <div className="row-span-3">
                                 <FormItem

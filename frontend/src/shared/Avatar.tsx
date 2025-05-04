@@ -1,5 +1,6 @@
 import useUser from '@/components/useUser'
 import React from 'react'
+import { roles } from './roles'
 
 const Avatar = () => {
     const user = useUser()
@@ -13,7 +14,7 @@ const Avatar = () => {
             />
             <div className="admin-info">
                 <h3>{user.sub}</h3>
-                <p className="admin-role">{user.role}</p>
+                <p className="admin-role">{roles[user.role]}</p>
             </div>
         </div>
     )

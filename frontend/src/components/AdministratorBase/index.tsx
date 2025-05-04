@@ -13,12 +13,12 @@ import MedicalCard from '../../components/MedicalCard'
 import EditAdmin from '../EditAdmin'
 
 function AdministratorsDatabase() {
-    const [patients, setPatients] = useState([])
-    const [totalPatients, setTotalPatients] = useState(0)
+    const [admins, setAdmins] = useState([])
+    const [totalAdmins, setTotalAdmins] = useState(0)
     const [page, setPage] = useState(0)
     const [rowsPerPage, setRowsPerPage] = useState(10)
     const [searchTerm, setSearchTerm] = useState('')
-    console.log(patients, totalPatients)
+    console.log(admins, totalAdmins)
     useEffect(() => {
         fetchPatients()
     }, [page, rowsPerPage, searchTerm])
@@ -27,11 +27,11 @@ function AdministratorsDatabase() {
         try {
             const skip = page * rowsPerPage
             const response = await fetch(
-                `http://127.0.0.1:8000/patients_v2?skip=${skip}&limit=${rowsPerPage}&search=${searchTerm}`
+                `http://127.0.0.1:8000/admins?skip=${skip}&limit=${rowsPerPage}&search=${searchTerm}`
             )
             const data = await response.json()
-            setPatients(data.patients)
-            setTotalPatients(data.total)
+            setAdmins(data.admins)
+            setTotalAdmins(data.total)
         } catch (error) {
             console.error('Error fetching patients:', error)
         }
@@ -56,18 +56,18 @@ function AdministratorsDatabase() {
             <Table>
                 <TableHead>
                     <TableRow>
-                        <TableCell>Patient</TableCell>
-                        <TableCell>Contact</TableCell>
-                        <TableCell>Medical Record</TableCell>
+                        <TableCell>Администратор</TableCell>
+                        <TableCell>Контакт</TableCell>
+                        <TableCell></TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {patients.map((patient) => (
-                        <TableRow key={patient.id}>
-                            <TableCell>{patient.full_name}</TableCell>
-                            <TableCell>{patient.contact_info}</TableCell>
+                    {admins?.map((admin) => (
+                        <TableRow key={admin.id}>
+                            <TableCell>{admin.full_name}</TableCell>
+                            <TableCell>{admin.contact_info}</TableCell>
                             <TableCell>
-                                <EditAdmin id={patient.id} />
+                                <EditAdmin id={admin.id} />
                             </TableCell>
                         </TableRow>
                     ))}
@@ -76,7 +76,7 @@ function AdministratorsDatabase() {
             <TablePagination
                 rowsPerPageOptions={[5, 10]}
                 component="div"
-                count={totalPatients}
+                count={totalAdmins}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={(event, newPage) => setPage(newPage)}

@@ -60,9 +60,9 @@ const DoctorDatabase = () => {
             <Table>
                 <TableHead>
                     <TableRow>
-                        <TableCell>Doctor</TableCell>
-                        <TableCell>Specialty</TableCell>
-                        <TableCell>Actions</TableCell>
+                        <TableCell>ФИО</TableCell>
+                        <TableCell>Специализация</TableCell>
+                        <TableCell></TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>

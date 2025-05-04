@@ -3,15 +3,19 @@ import { Box, Button, Modal, TextareaAutosize } from '@mui/material'
 import {
     Controller,
     FormProvider,
+    SubmitHandler,
     useForm,
     useFormState,
 } from 'react-hook-form'
+import { z } from 'zod'
 import { Input } from '@mui/material'
 import { PhoneInput } from '@/shared/FormItems'
 import FormItem from '@/shared/FormItem'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { schema } from './schema'
 import { fetchDoctor } from '@/api/fetchDoctor'
+import { editDoctor } from '@/api/editDoctor'
+import { toast } from 'mui-sonner'
 
 const EditButton = (props: ComponentProps<typeof Button>) => {
     return (
@@ -23,7 +27,7 @@ const EditButton = (props: ComponentProps<typeof Button>) => {
 const EditContent = ({ id }: { id: number }) => {
     const form = useForm({ resolver: zodResolver(schema) })
     const { errors } = useFormState(form)
-
+    console.log({ errors })
     useEffect(() => {
         if (!id) return
 
@@ -32,16 +36,19 @@ const EditContent = ({ id }: { id: number }) => {
                 full_name: data.full_name,
                 phone_number: data.contact_info,
                 speciality: data.speciality,
-                //     gender: data.gender,
-                //     identity_document: data.identity_document,
-                //     insurance_series_number: data.insurance_series_number,
-                //     benefit_code: data.benefit_code,
-                //     diseases: data.diseases,
             })
         })
     }, [id])
 
-    const onSubmit = (data: Record<string, string>) => {}
+    const onSubmit: SubmitHandler<z.infer<typeof schema>> = async (data) => {
+        console.log(data)
+        try {
+            await editDoctor(id, data)
+            toast.success('Данные обновлены')
+        } catch (e) {
+            toast.error('Не удалось изменить данные')
+        }
+    }
 
     return (
         <div className="h-4/6 w-4/6 overflow-scroll rounded-md bg-white px-5 py-6 shadow-md">
@@ -49,7 +56,7 @@ const EditContent = ({ id }: { id: number }) => {
                 <h3 className="text-left text-lg">Редактирование</h3>
                 <FormProvider {...form}>
                     <form
-                        id="edit"
+                        id="edit_doctor"
                         className="flex h-full flex-col gap-10"
                         onSubmit={(e) => {
                             e.preventDefault()
@@ -82,7 +89,11 @@ const EditContent = ({ id }: { id: number }) => {
 
                 <div className="flex justify-between">
                     <Button type="button">Профиль</Button>
-                    <Button variant="contained" form="edit" type="submit">
+                    <Button
+                        variant="contained"
+                        form="edit_doctor"
+                        type="submit"
+                    >
                         Сохранить
                     </Button>
                 </div>
