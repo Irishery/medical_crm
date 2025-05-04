@@ -11,9 +11,9 @@ RUN npm install jwt-decode
 RUN npm install @mui/material @emotion/react @emotion/styled --legacy-peer-deps
 RUN npm install @fontsource/roboto --legacy-peer-deps
 RUN npm install @mui/icons-material --legacy-peer-deps
-RUN npm install react-router-dom@latest
-RUN npm install react-big-calendar moment react-select
-RUN npm install react-select
+RUN npm install react-router-dom@latest --legacy-peer-deps 
+RUN npm install react-big-calendar moment react-select --legacy-peer-deps 
+RUN npm install react-select --legacy-peer-deps 
 
 
 # Copy the remaining application files to the working directory
