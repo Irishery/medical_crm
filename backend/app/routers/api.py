@@ -19,6 +19,37 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 # CRUD для пользователей
 
+@router.get("/base_info/{username}", response_model=schemas.BaseUserInfo)
+def get_base_info(username: str, db: Session = Depends(get_db)):
+    user = crud.get_user_by_username(db, username=username)
+    logger.info(f"User: {user}")
+    logger.info(f"Username: {user.role}")
+    if user is None:
+        raise HTTPException(status_code=404, detail="Пользователь не найден")
+
+    if user.role == models.UserRole.doctor:
+        doctor = crud.get_doctor_by_username(db, username)
+        if doctor is None:
+            raise HTTPException(status_code=404, detail="Доктор не найден")
+        return schemas.BaseUserInfo(
+            full_name=doctor.full_name,
+            contact_info=doctor.contact_info
+        )
+
+    if user.role == models.UserRole.admin:
+        admin = crud.get_admin_by_username(db, username)
+        if admin is None:
+            raise HTTPException(status_code=404, detail="Админ не найден")
+        return schemas.BaseUserInfo(
+            full_name=admin.full_name,
+            contact_info=admin.contact_info
+        )
+
+    return schemas.BaseUserInfo(
+        full_name="Заглушка для ФИО",
+        contact_info="Заглушка для номера"
+    )
+
 
 @router.post("/users/", response_model=schemas.UserResponse)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
@@ -62,8 +93,34 @@ def read_user_by_username(username: str, db: Session = Depends(get_db)):
 # CRUD для врачей с сортировкой
 
 
+@router.post("/admin/", response_model=schemas.AdminResponse)
+def create_admin(admin: schemas.AdminCreate, db: Session = Depends(get_db)):
+
+    if crud.if_admin_exists(db, admin.username):
+        raise HTTPException(
+            status_code=400, detail="Админ с таким логином уже существует")
+
+    return crud.create_admin(db=db, admin=admin)
+
+
+@router.get("/admins/", response_model=schemas.AdminResponseTable)
+def get_admins(
+    skip: int = 0,
+    limit: int = 10,
+    search: Optional[str] = None,
+    db: Session = Depends(get_db)
+):
+    admins, total = crud.get_admins(db, skip=skip, limit=limit, search=search)
+    return {"admins": admins, "total": total}
+
+
 @router.post("/doctors/", response_model=schemas.DoctorResponse)
 def create_doctor(doctor: schemas.DoctorCreate, db: Session = Depends(get_db)):
+
+    if crud.if_doctor_exists(db, doctor.username):
+        raise HTTPException(
+            status_code=400, detail="Доктор с таким логином уже существует")
+
     return crud.create_doctor(db=db, doctor=doctor)
 
 
@@ -111,6 +168,14 @@ def get_doctor_by_username(username: str, db: Session = Depends(get_db)):
     if doctor is None:
         raise HTTPException(status_code=404, detail="Врач не найден")
     return doctor
+
+
+@router.put("/doctors/{doctor_id}", response_model=schemas.DoctorResponse)
+def update_doctor(doctor_id: int, doctor: schemas.DoctorUpdate, db: Session = Depends(get_db)):
+    db_doctor = crud.get_doctor(db, doctor_id=doctor_id)
+    if db_doctor is None:
+        raise HTTPException(status_code=404, detail="Врач не найден")
+    return crud.update_doctor(db=db, doctor_id=doctor_id, doctor=doctor)
 
 
 @router.delete("/doctors/{doctor_id}", response_model=schemas.DoctorResponse)
