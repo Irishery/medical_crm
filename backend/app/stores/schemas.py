@@ -83,6 +83,10 @@ class AdminResponse(AdminBase):
         orm_mode = True
 
 
+class AdminUpdate(AdminBase):
+    pass
+
+
 class AdminResponseTable(BaseModel):
     admins: List[AdminResponse]
     total: int

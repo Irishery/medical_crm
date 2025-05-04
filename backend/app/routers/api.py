@@ -103,6 +103,14 @@ def create_admin(admin: schemas.AdminCreate, db: Session = Depends(get_db)):
     return crud.create_admin(db=db, admin=admin)
 
 
+@router.get("/admin/{admin_id}", response_model=schemas.AdminResponse)
+def get_admin(admin_id: int, db: Session = Depends(get_db)):
+    admin = crud.get_admin(db, admin_id=admin_id)
+    if admin is None:
+        raise HTTPException(status_code=404, detail="Админ не найден")
+    return admin
+
+
 @router.get("/admins/", response_model=schemas.AdminResponseTable)
 def get_admins(
     skip: int = 0,
@@ -112,6 +120,11 @@ def get_admins(
 ):
     admins, total = crud.get_admins(db, skip=skip, limit=limit, search=search)
     return {"admins": admins, "total": total}
+
+
+@router.put("/admin/{admin_id}", response_model=schemas.AdminResponse)
+def update_admin(id: int, admin: schemas.AdminUpdate, db: Session = Depends(get_db)):
+    return crud.update_admin(db=db, admin_id=id, admin=admin)
 
 
 @router.post("/doctors/", response_model=schemas.DoctorResponse)
