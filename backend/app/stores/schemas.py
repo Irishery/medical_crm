@@ -57,13 +57,17 @@ class DoctorResponse(DoctorBase):
         orm_mode = True
 
 
+class DoctorUpdate(DoctorBase):
+    pass
+
+
 class DoctorResponseTable(BaseModel):
     doctors: List[DoctorResponse]
     total: int
 
 
 class AdminBase(BaseModel):
-    user_id: int
+    username: str
     full_name: str
     contact_info: str
 
@@ -77,6 +81,12 @@ class AdminResponse(AdminBase):
 
     class Config:
         orm_mode = True
+
+
+class AdminResponseTable(BaseModel):
+    admins: List[AdminResponse]
+    total: int
+
 # Базовая модель пациента
 
 
@@ -248,3 +258,8 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     username: Optional[str] = None
     role: Optional[str] = None
+
+
+class BaseUserInfo(BaseModel):
+    full_name: str
+    contact_info: str

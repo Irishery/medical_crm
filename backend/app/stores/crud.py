@@ -28,6 +28,14 @@ def get_doctor_by_username(db: Session, username: str):
     return db.query(models.Doctor).filter(models.Doctor.username == username).first()
 
 
+def if_doctor_exists(db: Session, username: str):
+    return db.query(models.Doctor).filter(models.Doctor.username == username).first() is not None
+
+
+def if_admin_exists(db: Session, username: str):
+    return db.query(models.Admin).filter(models.Admin.username == username).first() is not None
+
+
 def create_user(db: Session, user: schemas.UserCreate):
     hashed_password = pwd_context.hash(user.password)
     user.password = hashed_password
@@ -36,6 +44,31 @@ def create_user(db: Session, user: schemas.UserCreate):
     db.commit()
     db.refresh(db_user)
     return db_user
+
+
+def get_users(db: Session, skip: int = 0, limit: int = 10):
+    return db.query(models.User).offset(skip).limit(limit).all()
+
+
+def create_admin(db: Session, admin: schemas.AdminCreate):
+    db_admin = models.Admin(**admin.dict())
+    db.add(db_admin)
+    db.commit()
+    db.refresh(db_admin)
+    return db_admin
+
+
+def get_admin(db: Session, admin_id: int):
+    return db.query(models.Admin).filter(models.Admin.id == admin_id).first()
+
+
+def get_admin_by_username(db: Session, username: str):
+    return db.query(models.Admin).filter(models.Admin.username == username).first()
+
+
+def delete_adminn(db: Session, admin_id: int):
+    db.query(models.Admin).filter(models.Admin.id == admin_id).delete()
+    db.commit()
 
 
 def get_doctor(db: Session, doctor_id: int):
@@ -84,6 +117,17 @@ def get_doctors_v2(db: Session, skip: int = 0, limit: int = 10, search: str = No
     return query.offset(skip).limit(limit).all(), total
 
 
+def update_doctor(db: Session, doctor_id: int, doctor: schemas.DoctorUpdate):
+    db_doctor = db.query(models.Doctor).filter(
+        models.Doctor.id == doctor_id).first()
+    if db_doctor:
+        for key, value in doctor.dict().items():
+            setattr(db_doctor, key, value)
+        db.commit()
+        db.refresh(db_doctor)
+    return db_doctor
+
+
 def delete_doctor(db: Session, doctor_id: int):
     db.query(models.Doctor).filter(models.Doctor.id == doctor_id).delete()
     db.commit()
@@ -130,6 +174,28 @@ def get_patients_v2(db: Session, skip: int = 0, limit: int = 10, search: str = N
         # Generate search vector and tsquery
         search_vector = func.to_tsvector(
             "russian", models.Patient.full_name + ' ' + models.Patient.contact_info)
+        ts_query = func.to_tsquery("russian", search_query)
+
+        # Filter and sort by relevance
+        query = query.filter(search_vector.op("@@")(ts_query))
+        query = query.order_by(desc(func.ts_rank(search_vector, ts_query)))
+
+    total = query.count()
+
+    return query.offset(skip).limit(limit).all(), total
+
+
+def get_admins(db: Session, skip: int = 0, limit: int = 10, search: str = None):
+    query = db.query(models.User)
+
+    if search:
+        # Split search string into tokens and create a prefix query
+        search_tokens = search.split()
+        search_query = " & ".join([f"{token}:*" for token in search_tokens])
+
+        # Generate search vector and tsquery
+        search_vector = func.to_tsvector(
+            "russian", models.User.full_name + ' ' + models.User.username)
         ts_query = func.to_tsquery("russian", search_query)
 
         # Filter and sort by relevance
