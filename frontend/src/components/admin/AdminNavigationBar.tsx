@@ -1,18 +1,23 @@
 import { NavLink } from 'react-router-dom'
-import NewPatient from '../../components/admin/NewPatient'
-import NewAppointment from '../../components/admin/NewAppointment'
-import Logout from '../../components/Logout'
-import { CreateConsultationModal } from '../../pages/doctor/Consultations/EditConsultation'
+import './css/AdminNavigationBar.css'
+import NewPatient from './NewPatient'
+import NewAppointment from './NewAppointment'
+import Logout from '../Logout'
 import Avatar from '@/shared/Avatar'
 
-function NavigationBar() {
+function AdminNavigationBar() {
     return (
         <nav id="admin-nav">
             <Avatar></Avatar>
             <ul className="admin-nav-menu">
+                {/* <li>
+                    <NavLink to="/profile" className={({ isActive }) => isActive ? "active" : ""}>
+                        Профиль
+                    </NavLink>
+                </li> */}
                 <li>
                     <NavLink
-                        to="/doctor/schedule"
+                        to="/admin/schedule"
                         className={({ isActive }) => (isActive ? 'active' : '')}
                     >
                         Расписание
@@ -20,23 +25,24 @@ function NavigationBar() {
                 </li>
                 <li>
                     <NavLink
-                        to="/doctor/consultations"
-                        className={({ isActive }) => (isActive ? 'active' : '')}
-                    >
-                        Консультации
-                    </NavLink>
-                </li>
-                <li>
-                    <NavLink
-                        to="/doctor/patients"
+                        to="/admin/patients"
                         className={({ isActive }) => (isActive ? 'active' : '')}
                     >
                         Пациенты
                     </NavLink>
                 </li>
+                <li>
+                    <NavLink
+                        to="/admin/doctors"
+                        className={({ isActive }) => (isActive ? 'active' : '')}
+                    >
+                        Врачи
+                    </NavLink>
+                </li>
             </ul>
             <div className="mb-10 flex flex-col gap-2">
-                <CreateConsultationModal />
+                <NewPatient />
+                <NewAppointment />
             </div>
 
             <Logout />
@@ -44,4 +50,4 @@ function NavigationBar() {
     )
 }
 
-export default NavigationBar
+export default AdminNavigationBar

@@ -2,51 +2,50 @@
     padding: 0 10%;
     background-color: #f8f9fc;
     font-family: 'Arial', sans-serif;
-  }
-  
-  .title {
+}
+
+.title {
     font-size: 24px;
     font-weight: bold;
     margin-bottom: 20px;
     color: #333;
-  }
-  
-  .search-bar div {
+}
+
+.search-bar div {
     margin-bottom: 20px;
-  }
-  
-  .MuiTable-root {
+}
+
+.MuiTable-root {
     background-color: white;
     border-radius: 8px;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  .MuiTableCell-root {
+}
+
+.MuiTableCell-root {
     font-size: 16px;
-  }
-  
-  .MuiTableRow-root:hover {
+}
+
+.MuiTableRow-root:hover {
     background-color: #f1f5f9;
-  }
-  
-  .availability {
+}
+
+.availability {
     padding: 5px 10px;
     border-radius: 15px;
     font-weight: bold;
     color: white;
-  }
-  
-  .availability.available {
+}
+
+.availability.available {
     background-color: #28a745;
-  }
-  
-  .availability.unavailable {
+}
+
+.availability.unavailable {
     background-color: #dc3545;
-  }
-  
-  .edit-button {
+}
+
+.edit-button {
     color: #007bff;
     font-weight: bold;
     text-transform: none;
-  }
-  
+}

@@ -1,8 +1,4 @@
-import {
-    dateSchema,
-    fullnameSchema,
-    phoneSchema,
-} from '../../../../src/shared/patterns'
+import { dateSchema, fullnameSchema, phoneSchema } from '@/shared/patterns'
 import { z } from 'zod'
 
 export const schema = z.object({

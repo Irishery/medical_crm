@@ -6,6 +6,8 @@ import HeadDoctorPatients from './HeadDoctorPatients'
 import HeadDoctorAdministrators from './HeadDoctorAdministrators'
 import HeadDoctorDoctors from './HeadDoctorDoctor'
 import HeadDoctorStats from './HeadDoctorStats'
+import DoctorDatabase from '@/components/DoctorBase'
+import AdministratorsDatabase from '@/components/AdministratorBase'
 
 type Props = {}
 
@@ -18,10 +20,10 @@ function HeadDoctor() {
                     <Route path="schedule" element={<HeadDoctorSchedule />} />
                     <Route
                         path="administrators"
-                        element={<HeadDoctorAdministrators />}
+                        element={<AdministratorsDatabase />}
                     />
                     <Route path="patients" element={<HeadDoctorPatients />} />
-                    <Route path="doctors" element={<HeadDoctorDoctors />} />
+                    <Route path="doctors" element={<DoctorDatabase />} />
                     <Route path="stats" element={<HeadDoctorStats />} />
                     <Route path="*" element={<div>Страница не найдена</div>} />
                 </Routes>

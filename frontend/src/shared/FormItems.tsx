@@ -8,9 +8,7 @@ type Props = {}
 
 export const PhoneInput = (props: ComponentProps<'input'>) => {
     const form = useFormContext()
-    const errors = form.formState.errors
 
-    console.log(errors)
     return (
         <>
             <label htmlFor="phone">Номер телефона</label>
@@ -23,11 +21,6 @@ export const PhoneInput = (props: ComponentProps<'input'>) => {
                     pattern: /[A-Za-z]{3}/,
                 })}
             />
-            {errors.phone && (
-                <ErrorMessage>
-                    {getErrorMessage(errors.phone.message as string)}
-                </ErrorMessage>
-            )}
         </>
     )
 }

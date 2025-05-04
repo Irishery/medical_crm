@@ -1,0 +1,110 @@
+import React, { ComponentProps, useEffect, useState } from 'react'
+import { Box, Button, Modal, TextareaAutosize } from '@mui/material'
+import {
+    Controller,
+    FormProvider,
+    useForm,
+    useFormState,
+} from 'react-hook-form'
+import { Input } from '@mui/material'
+import { PhoneInput } from '@/shared/FormItems'
+import FormItem from '@/shared/FormItem'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { schema } from './schema'
+import { fetchDoctor } from '@/api/fetchDoctor'
+
+const EditButton = (props: ComponentProps<typeof Button>) => {
+    return (
+        <Button {...props} variant="text" className="edit-button">
+            Редактировать
+        </Button>
+    )
+}
+const EditContent = ({ id }: { id: number }) => {
+    const form = useForm({ resolver: zodResolver(schema) })
+    const { errors } = useFormState(form)
+
+    useEffect(() => {
+        if (!id) return
+
+        fetchDoctor(id).then((data) => {
+            form.reset({
+                full_name: data.full_name,
+                phone_number: data.contact_info,
+                speciality: data.speciality,
+                //     gender: data.gender,
+                //     identity_document: data.identity_document,
+                //     insurance_series_number: data.insurance_series_number,
+                //     benefit_code: data.benefit_code,
+                //     diseases: data.diseases,
+            })
+        })
+    }, [id])
+
+    const onSubmit = (data: Record<string, string>) => {}
+
+    return (
+        <div className="h-4/6 w-4/6 overflow-scroll rounded-md bg-white px-5 py-6 shadow-md">
+            <div className="flex h-full flex-col gap-10">
+                <h3 className="text-left text-lg">Редактирование</h3>
+                <FormProvider {...form}>
+                    <form
+                        id="edit"
+                        className="flex h-full flex-col gap-10"
+                        onSubmit={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            form.handleSubmit(onSubmit)()
+                        }}
+                    >
+                        <div className="grid grid-cols-2 gap-5">
+                            <FormItem name="full_name">
+                                <label htmlFor="full_name">ФИО</label>
+                                <Input {...form.register('full_name')} />
+                            </FormItem>
+
+                            <FormItem name="speciality">
+                                <label htmlFor="speciality">
+                                    Специализация
+                                </label>
+                                <Input {...form.register('speciality')} />
+                            </FormItem>
+
+                            <FormItem name="phone_number">
+                                <label htmlFor="phone_number">
+                                    Номер телефона
+                                </label>
+                                <Input {...form.register('phone_number')} />
+                            </FormItem>
+                        </div>
+                    </form>
+                </FormProvider>
+
+                <div className="flex justify-between">
+                    <Button type="button">Профиль</Button>
+                    <Button variant="contained" form="edit" type="submit">
+                        Сохранить
+                    </Button>
+                </div>
+            </div>
+        </div>
+    )
+}
+const Edit = ({ id }: { id: number }) => {
+    const [open, setOpen] = useState(false)
+
+    return (
+        <>
+            <EditButton onClick={() => setOpen((o) => !o)} />
+            <Modal
+                open={open}
+                onClose={() => setOpen(false)}
+                className="flex items-center justify-center"
+            >
+                <EditContent id={id} />
+            </Modal>
+        </>
+    )
+}
+
+export default Edit

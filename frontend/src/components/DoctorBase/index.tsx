@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import {
     Table,
     TableBody,
@@ -9,32 +9,35 @@ import {
     Button,
     TextField,
 } from '@mui/material'
-import MedicalCard from '../../components/MedicalCard'
-import Profile from './Profile'
+import './style.css'
+import EditDoctor from '@/components/EditDoctor'
 
-function AdminPatients() {
-    const [patients, setPatients] = useState([])
-    const [totalPatients, setTotalPatients] = useState(0)
+const DoctorDatabase = () => {
+    const [doctors, setDoctors] = useState([])
+    const [totalDoctors, setTotalDoctors] = useState(0)
     const [page, setPage] = useState(0)
     const [rowsPerPage, setRowsPerPage] = useState(10)
     const [searchTerm, setSearchTerm] = useState('')
-    console.log(patients, totalPatients)
+
     useEffect(() => {
-        fetchPatients()
+        fetchDoctors()
     }, [page, rowsPerPage, searchTerm])
 
-    const fetchPatients = async () => {
+    const fetchDoctors = async () => {
         try {
             const skip = page * rowsPerPage
             const response = await fetch(
-                `http://127.0.0.1:8000/doctors_v2?skip=${skip}&limit=${rowsPerPage}&search=${searchTerm}`
+                `http://127.0.0.1:8000/doctors?skip=${skip}&limit=${rowsPerPage}&search=${searchTerm}`
             )
             const data = await response.json()
-            console.log(data)
-            setPatients(data.doctors)
-            setTotalPatients(data.total)
+            if (Array.isArray(data)) {
+                console.log(data)
+                console.log(searchTerm)
+                setDoctors(data)
+                setTotalDoctors(data.length)
+            }
         } catch (error) {
-            console.error('Error fetching patients:', error)
+            console.error('Error fetching doctors:', error)
         }
     }
 
@@ -45,7 +48,7 @@ function AdminPatients() {
 
     return (
         <div className="container">
-            <h1 className="title">База Врачей</h1>
+            <h1 className="title">База врачей</h1>
             <TextField
                 variant="outlined"
                 placeholder="Искать по ФИО/контактам/специализации"
@@ -57,18 +60,18 @@ function AdminPatients() {
             <Table>
                 <TableHead>
                     <TableRow>
-                        <TableCell>Доктор</TableCell>
-                        <TableCell>Контакты</TableCell>
-                        <TableCell>Профиль</TableCell>
+                        <TableCell>Doctor</TableCell>
+                        <TableCell>Specialty</TableCell>
+                        <TableCell>Actions</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {patients.map((patient) => (
-                        <TableRow key={patient.id}>
-                            <TableCell>{patient.full_name}</TableCell>
-                            <TableCell>{patient.contact_info}</TableCell>
+                    {doctors.map((doctor) => (
+                        <TableRow key={doctor.id}>
+                            <TableCell>{doctor.full_name}</TableCell>
+                            <TableCell>{doctor.speciality}</TableCell>
                             <TableCell>
-                                <Profile id={patient.id} />
+                                <EditDoctor id={doctor.id} />
                             </TableCell>
                         </TableRow>
                     ))}
@@ -77,7 +80,7 @@ function AdminPatients() {
             <TablePagination
                 rowsPerPageOptions={[5, 10]}
                 component="div"
-                count={totalPatients}
+                count={totalDoctors}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={(event, newPage) => setPage(newPage)}
@@ -89,4 +92,4 @@ function AdminPatients() {
     )
 }
 
-export default AdminPatients
+export default DoctorDatabase

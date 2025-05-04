@@ -8,10 +8,11 @@ import AdminSchedule from './AdminSchedule'
 import AdminPatients from './AdminPatients'
 import AdminDoctors from './AdminDoctors'
 // fuk it
-import DoctorSchedule from '../doctor/Schedule/'
+import DoctorSchedule from '../doctor/Schedule'
 import NewPatient from '../../components/admin/NewPatient'
 
 import './css/Admin.css'
+import DoctorDatabase from '@/components/DoctorBase'
 
 function Admin() {
     return (
@@ -21,7 +22,7 @@ function Admin() {
                 <Routes>
                     <Route path="schedule" element={<AdminSchedule />} />
                     <Route path="patients" element={<AdminPatients />} />
-                    <Route path="doctors" element={<AdminDoctors />} />
+                    <Route path="doctors" element={<DoctorDatabase />} />
 
                     <Route path="*" element={<div>Page not found</div>} />
                 </Routes>

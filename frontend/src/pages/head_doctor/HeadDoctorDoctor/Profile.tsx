@@ -12,8 +12,8 @@ import Paper from '@mui/material/Paper'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { schema } from './schema'
 import FormItem from '../../../shared/FormItem'
-import { fetchDoctor } from './fetchDoctor'
 import { z } from 'zod'
+import { fetchDoctor } from '@/api/fetchDoctor'
 
 const ProfileButton = (props: ComponentProps<typeof Button>) => {
     return (
@@ -33,17 +33,20 @@ const ProfileContent = ({ doctorId }: MedicalCardContentProps) => {
     })
 
     useEffect(() => {
+        console.log({ doctorId })
         if (!doctorId) return
 
         fetchDoctor(doctorId).then((data) => {
-            setMedicalCard(data)
+            console.log({ data })
             form.reset({
                 full_name: data.full_name,
-                gender: data.gender,
-                identity_document: data.identity_document,
-                insurance_series_number: data.insurance_series_number,
-                benefit_code: data.benefit_code,
-                diseases: data.diseases,
+                phone_number: data.contact_info,
+                speciality: data.speciality,
+                //     gender: data.gender,
+                //     identity_document: data.identity_document,
+                //     insurance_series_number: data.insurance_series_number,
+                //     benefit_code: data.benefit_code,
+                //     diseases: data.diseases,
             })
         })
     }, [doctorId])
@@ -99,46 +102,21 @@ const ProfileContent = ({ doctorId }: MedicalCardContentProps) => {
                                 <Input {...form.register('full_name')} />
                             </FormItem>
 
-                            <FormItem name="gender">
-                                <label htmlFor="gender">Пол</label>
-                                <Input {...form.register('gender')} />
-                            </FormItem>
-
-                            <FormItem name="identity_document">
-                                <label htmlFor="identity_document">
-                                    Серия и номер паспорта
+                            <FormItem name="phone_number">
+                                <label htmlFor="phone_number">
+                                    Контактные данные
                                 </label>
-                                <Input
-                                    {...form.register('identity_document')}
-                                />
+                                <Input {...form.register('phone_number')} />
                             </FormItem>
 
-                            <FormItem name="insurance_series_number">
-                                <label htmlFor="insurance_series_number">
-                                    Полис ОМС
+                            <FormItem name="speciality">
+                                <label htmlFor="speciality">
+                                    Специализация
                                 </label>
-                                <Input
-                                    {...form.register(
-                                        'insurance_series_number'
-                                    )}
-                                />
-                            </FormItem>
-
-                            <FormItem name="benefit_code">
-                                <label htmlFor="benefit_code">Код Льготы</label>
-                                <Input {...form.register('benefit_code')} />
-                            </FormItem>
-
-                            <FormItem name="diseases">
-                                <label htmlFor="diseases">
-                                    Список заболеваний
-                                </label>
-                                <Input {...form.register('diseases')} />
+                                <Input {...form.register('speciality')} />
                             </FormItem>
                         </form>
                     </FormProvider>
-
-                    <MedicalCardTable />
                 </div>
 
                 <div className="flex justify-end">
@@ -152,11 +130,10 @@ const ProfileContent = ({ doctorId }: MedicalCardContentProps) => {
 }
 
 type Props = {
-    patientId: string
+    id: string
 }
 const Profile = (props: Props) => {
     const [open, setOpen] = useState(false)
-
     return (
         <>
             <ProfileButton onClick={() => setOpen((o) => !o)} />
@@ -165,7 +142,7 @@ const Profile = (props: Props) => {
                 onClose={() => setOpen(false)}
                 className="flex items-center justify-center bg-white"
             >
-                <ProfileContent patientId={props.patientId} />
+                <ProfileContent doctorId={props.id} />
             </Modal>
         </>
     )

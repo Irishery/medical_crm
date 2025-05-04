@@ -10,9 +10,9 @@ import {
     TextField,
 } from '@mui/material'
 import MedicalCard from '../../components/MedicalCard'
-import Profile from './Profile'
+import EditAdmin from '../EditAdmin'
 
-function AdminPatients() {
+function AdministratorsDatabase() {
     const [patients, setPatients] = useState([])
     const [totalPatients, setTotalPatients] = useState(0)
     const [page, setPage] = useState(0)
@@ -27,11 +27,10 @@ function AdminPatients() {
         try {
             const skip = page * rowsPerPage
             const response = await fetch(
-                `http://127.0.0.1:8000/doctors_v2?skip=${skip}&limit=${rowsPerPage}&search=${searchTerm}`
+                `http://127.0.0.1:8000/patients_v2?skip=${skip}&limit=${rowsPerPage}&search=${searchTerm}`
             )
             const data = await response.json()
-            console.log(data)
-            setPatients(data.doctors)
+            setPatients(data.patients)
             setTotalPatients(data.total)
         } catch (error) {
             console.error('Error fetching patients:', error)
@@ -45,7 +44,7 @@ function AdminPatients() {
 
     return (
         <div className="container">
-            <h1 className="title">База Врачей</h1>
+            <h1 className="title">База Администраторов</h1>
             <TextField
                 variant="outlined"
                 placeholder="Искать по ФИО/контактам/специализации"
@@ -57,9 +56,9 @@ function AdminPatients() {
             <Table>
                 <TableHead>
                     <TableRow>
-                        <TableCell>Доктор</TableCell>
-                        <TableCell>Контакты</TableCell>
-                        <TableCell>Профиль</TableCell>
+                        <TableCell>Patient</TableCell>
+                        <TableCell>Contact</TableCell>
+                        <TableCell>Medical Record</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -68,7 +67,7 @@ function AdminPatients() {
                             <TableCell>{patient.full_name}</TableCell>
                             <TableCell>{patient.contact_info}</TableCell>
                             <TableCell>
-                                <Profile id={patient.id} />
+                                <EditAdmin id={patient.id} />
                             </TableCell>
                         </TableRow>
                     ))}
@@ -89,4 +88,4 @@ function AdminPatients() {
     )
 }
 
-export default AdminPatients
+export default AdministratorsDatabase

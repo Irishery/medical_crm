@@ -3,21 +3,13 @@ import NewPatient from '../../components/admin/NewPatient'
 import NewAppointment from '../../components/admin/NewAppointment'
 import Logout from '../../components/Logout'
 import { CreateConsultationModal } from '../../pages/doctor/Consultations/EditConsultation'
+import { CreateEmployeeModal } from './components/CreateEmployee'
+import Avatar from '@/shared/Avatar'
 
 function NavigationBar() {
     return (
         <nav id="admin-nav">
-            <div className="admin-nav-header">
-                <img
-                    src="https://img.freepik.com/free-vector/people-design-illustration_24877-49375.jpg"
-                    alt="Admin Avatar"
-                    className="admin-avatar"
-                />
-                <div className="admin-info">
-                    <h3>Светлана Светлановна</h3>
-                    <p className="admin-role">Администратор</p>
-                </div>
-            </div>
+            <Avatar />
             <ul className="admin-nav-menu">
                 <li>
                     <NavLink
@@ -32,7 +24,7 @@ function NavigationBar() {
                         to="/head_doctor/administrators"
                         className={({ isActive }) => (isActive ? 'active' : '')}
                     >
-                        Консультации
+                        Администраторы
                     </NavLink>
                 </li>
                 <li>
@@ -61,7 +53,7 @@ function NavigationBar() {
                 </li>
             </ul>
             <div className="mb-10 flex flex-col gap-2">
-                <CreateConsultationModal />
+                <CreateEmployeeModal />
             </div>
 
             <Logout />
