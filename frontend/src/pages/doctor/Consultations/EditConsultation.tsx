@@ -10,8 +10,13 @@ import {
 } from 'react-hook-form'
 import { z } from 'zod'
 import { schema } from './consultation-schema'
-import { Input, Modal } from '@mui/material'
+import { Input, Modal, TextareaAutosize, TextField } from '@mui/material'
 import { Button } from '@mui/material'
+import PrintButton from './PrintButton'
+import { PatientInputForm } from '@/shared/PatientInput'
+import { toast } from 'mui-sonner'
+import { createConsultation } from '@/api/createConsultation'
+import DatePickerForm from '@/shared/DatePickerForm'
 
 type Props = {
     handleSubmit?: (data: z.infer<typeof schema>) => void
@@ -19,9 +24,8 @@ type Props = {
 
 const Form = ({ handleSubmit, ...props }: Props) => {
     const form = useForm({ resolver: zodResolver(schema) })
-
     const onSubmit: SubmitHandler<z.infer<typeof schema>> = (data) => {
-        onSubmit?.(data)
+        handleSubmit?.(data)
     }
 
     return (
@@ -36,10 +40,13 @@ const Form = ({ handleSubmit, ...props }: Props) => {
                         form.handleSubmit(onSubmit)()
                     }}
                 >
+                    <h2 className="text-left text-2xl">
+                        Информация о пациенте
+                    </h2>
                     <div className="grid grid-cols-2 gap-5">
                         <FormItem name="name">
                             <label htmlFor="name">ФИО</label>
-                            <Input {...form.register('name')} />
+                            <PatientInputForm name="name" />
                         </FormItem>
 
                         <FormItem name="gender">
@@ -49,7 +56,7 @@ const Form = ({ handleSubmit, ...props }: Props) => {
 
                         <FormItem name="birth_date">
                             <label htmlFor="birth_date">Дата Рождения</label>
-                            <Input {...form.register('birth_date')} />
+                            <DatePickerForm name="birth_date" />
                         </FormItem>
 
                         <FormItem name="phone">
@@ -57,46 +64,69 @@ const Form = ({ handleSubmit, ...props }: Props) => {
                             <Input type="tel" {...form.register('phone')} />
                         </FormItem>
 
-                        <FormItem name="diagnosis">
-                            <label htmlFor="diagnosis">Диагноз</label>
-                            <Input {...form.register('diagnosis')} />
-                        </FormItem>
-
-                        <FormItem name="icd">
-                            <label htmlFor="icd">ICD-10</label>
-                            <Input {...form.register('icd')} />
-                        </FormItem>
-
-                        <FormItem name="symptoms">
-                            <label htmlFor="symptoms">Симптомы</label>
-                            <Input {...form.register('symptoms')} />
-                        </FormItem>
-
                         <FormItem name="email">
                             <label htmlFor="email">Email</label>
                             <Input {...form.register('email')} />
                         </FormItem>
+                    </div>
+
+                    <h2 className="text-left text-2xl">Информация о приеме</h2>
+                    <div className="grid grid-cols-2 gap-5">
+                        <FormItem name="diagnosis">
+                            <label htmlFor="diagnosis">Диагноз</label>
+                            <TextField {...form.register('diagnosis')} />
+                        </FormItem>
+
+                        <FormItem name="icd">
+                            <label htmlFor="icd">ICD-10</label>
+                            <TextField {...form.register('icd')} />
+                        </FormItem>
+
+                        <FormItem name="symptoms">
+                            <label htmlFor="symptoms">Симптомы</label>
+                            <TextareaAutosize
+                                className="min-h-20 resize-none"
+                                {...form.register('symptoms')}
+                            />
+                        </FormItem>
 
                         <FormItem name="recommendations">
-                            <label htmlFor="email">Рекомендации</label>
-                            <Input {...form.register('email')} />
+                            <label htmlFor="recommendations">
+                                Рекомендации
+                            </label>
+                            <TextareaAutosize
+                                className="min-h-20 resize-none"
+                                {...form.register('recommendations')}
+                            />
                         </FormItem>
                     </div>
                 </form>
-            </FormProvider>
 
-            <div className="flex justify-end">
-                <Button form="consultation" type="submit">
-                    Распечатать
-                </Button>
-            </div>
+                <div className="mt-5 flex justify-end">
+                    <PrintButton template={() => 'Форма для печати'} />
+                    <Button type="submit" form="consultation">
+                        Сохранить консультацию
+                    </Button>
+                </div>
+            </FormProvider>
         </div>
     )
 }
 
 const CreateConsultation = () => {
-    const handleSubmit = (data: z.infer<typeof schema>) => {
-        // POST
+    const handleSubmit = async (data: z.infer<typeof schema>) => {
+        try {
+            await createConsultation({
+                date_time: new Date().toISOString(),
+                diagnosis: data.diagnosis,
+                patient_review: data.symptoms,
+                treatment: data.recommendations,
+                doctor_notes: data.recommendations,
+            })
+            toast.success('Консультация создана')
+        } catch (e) {
+            toast.error('Не удалось создать консультацию')
+        }
         console.log('create consultation', data)
     }
 
@@ -123,7 +153,6 @@ const CreateConsultationModal = () => {
                 className="flex items-center justify-center"
             >
                 <div className="h-4/6 overflow-auto rounded-md bg-white px-5 py-6 shadow-md">
-                    {' '}
                     <CreateConsultation />
                 </div>
             </Modal>
@@ -133,4 +162,4 @@ const CreateConsultationModal = () => {
 
 const EditConsultation = () => {}
 
-export { CreateConsultation, CreateConsultationModal }
+export { EditConsultation, CreateConsultation, CreateConsultationModal }

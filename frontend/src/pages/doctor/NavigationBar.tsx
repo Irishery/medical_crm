@@ -1,9 +1,10 @@
-import { NavLink } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import NewPatient from '../../components/admin/NewPatient'
 import NewAppointment from '../../components/admin/NewAppointment'
 import Logout from '../../components/Logout'
 import { CreateConsultationModal } from '../../pages/doctor/Consultations/EditConsultation'
 import Avatar from '@/shared/Avatar'
+import { Button } from '@mui/material'
 
 function NavigationBar() {
     return (
@@ -36,7 +37,11 @@ function NavigationBar() {
                 </li>
             </ul>
             <div className="mb-10 flex flex-col gap-2">
-                <CreateConsultationModal />
+                <Link to="/doctor/consultations/create" className="w-full">
+                    <Button className="w-full" variant="contained">
+                        Новая консультация
+                    </Button>
+                </Link>
             </div>
 
             <Logout />

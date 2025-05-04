@@ -9,46 +9,27 @@ import { Button } from '@mui/material'
 import DatePickerForm from '@/shared/DatePickerForm'
 import { PatientInputForm } from '@/shared/PatientInput'
 import TimeFieldForm from '@/shared/TimeFieldForm'
+import { printFormData } from '@/shared/printFormData'
+import { printer } from '@/shared/printer'
 
 type Props = {}
-
-function printFormData(data: z.infer<typeof schema>) {
-    const printContent = `
-      <h1>Данные для печати</h1>
-      <p><strong>ФИО пациента:</strong> ${data.name.label}</p>
-      <p><strong>Контакты пациента:</strong> ${data.phone}</p>
-      <p><strong>Вид обследования:</strong> ${data.examination}</p>
-      <p><strong>Контакты врача:</strong> ${data.doctor_phone}</p>
-      <p><strong>Дата:</strong> ${data.date}</p>
-      <p><strong>Время:</strong> ${data.time}</p>
-    `
-
-    const printWindow = window.open('', '_blank')
-    printWindow.document.write(`
-      <html>
-        <head>
-          <title>Печать данных</title>
-          <style>
-            body { font-family: Arial, sans-serif; margin: 20px; }
-            h1 { color: #333; }
-            p { margin: 5px 0; }
-          </style>
-        </head>
-        <body>
-          ${printContent}
-        </body>
-      </html>
-    `)
-
-    printWindow.document.close()
-    printWindow.print()
-}
 
 const Print = (props: Props) => {
     const form = useForm({ resolver: zodResolver(schema) })
 
     const onSubmit: SubmitHandler<z.infer<typeof schema>> = (data) => {
-        printFormData(data)
+        printer(
+            data,
+            () => `
+                <h1>Данные для печати</h1>
+                <p><strong>ФИО пациента:</strong> ${data.name.label}</p>
+                <p><strong>Контакты пациента:</strong> ${data.phone}</p>
+                <p><strong>Вид обследования:</strong> ${data.examination}</p>
+                <p><strong>Контакты врача:</strong> ${data.doctor_phone}</p>
+                <p><strong>Дата:</strong> ${data.date}</p>
+                <p><strong>Время:</strong> ${data.time}</p>
+            `
+        )
     }
 
     return (

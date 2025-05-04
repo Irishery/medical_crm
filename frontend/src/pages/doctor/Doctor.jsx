@@ -4,6 +4,7 @@ import DoctorPatients from './DoctorPatients'
 import DoctorMedicalCard from './DoctorMedicalCard'
 import NavigationBar from './NavigationBar'
 import Consultations from './Consultations'
+import { CreateConsultation } from './Consultations/EditConsultation'
 
 function Doctor() {
     return (
@@ -16,6 +17,10 @@ function Doctor() {
                     {/* <Route path="schedule" element={<div>hello2</div>} /> */}
                     <Route path="patients" element={<DoctorPatients />} />
                     <Route path="consultations" element={<Consultations />} />
+                    <Route
+                        path="consultations/create"
+                        element={<CreateConsultation />}
+                    />
                     <Route
                         path="patients/:id/medical-card"
                         element={<DoctorMedicalCard />}
