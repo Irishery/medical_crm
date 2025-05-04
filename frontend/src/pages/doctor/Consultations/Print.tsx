@@ -6,6 +6,8 @@ import { z } from 'zod'
 import { schema } from './print-schema'
 import { Input } from '@mui/material'
 import { Button } from '@mui/material'
+import DatePickerForm from '@/shared/DatePickerForm'
+import { PatientInputForm } from '@/shared/PatientInput'
 
 type Props = {}
 
@@ -30,7 +32,7 @@ const Print = (props: Props) => {
 
                         <FormItem name="name">
                             <label htmlFor="name">ФИО</label>
-                            <Input {...form.register('name')} />
+                            <PatientInputForm name="name" />
                         </FormItem>
 
                         <FormItem name="phone">
@@ -52,7 +54,7 @@ const Print = (props: Props) => {
 
                         <FormItem name="date">
                             <label htmlFor="date">Дата</label>
-                            <Input {...form.register('date')} />
+                            <DatePickerForm name="date" />
                         </FormItem>
 
                         <FormItem name="doctor_phone">
