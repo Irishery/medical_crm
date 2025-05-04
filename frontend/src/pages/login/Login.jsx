@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { jwtDecode } from 'jwt-decode' // Import jwt-decode library
 import './css/Login.css'
+import { Input, Button } from '@mui/material'
 
 function Login() {
     const [username, setUsername] = useState('') // Changed from email to username
@@ -60,10 +61,13 @@ function Login() {
     }
 
     return (
-        <div id="login-container">
-            <div id="inputs">
-                <form onSubmit={handleSubmit}>
-                    <input
+        <div
+            className="flex h-dvh items-center justify-center"
+            id="login-container "
+        >
+            <div>
+                <form className="grid gap-2" onSubmit={handleSubmit}>
+                    <Input
                         type="text" // Changed from email to text
                         placeholder="Username"
                         value={username}
@@ -71,7 +75,7 @@ function Login() {
                         required
                     />
                     <br />
-                    <input
+                    <Input
                         type="password"
                         placeholder="Password"
                         value={password}
@@ -79,9 +83,15 @@ function Login() {
                         required
                     />
                     <br />
-                    <input type="submit" value="Login" />
+                    <Button variant="contained" type="submit" value="Login">
+                        Войти
+                    </Button>
                 </form>
-                {error && <p style={{ color: 'red' }}>{error}</p>}
+                {error && (
+                    <p className="mt-2" style={{ color: 'red' }}>
+                        {error}
+                    </p>
+                )}
             </div>
         </div>
     )

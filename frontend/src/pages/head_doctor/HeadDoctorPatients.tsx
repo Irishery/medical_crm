@@ -55,9 +55,9 @@ function AdminPatients() {
             <Table>
                 <TableHead>
                     <TableRow>
-                        <TableCell>Patient</TableCell>
-                        <TableCell>Contact</TableCell>
-                        <TableCell>Medical Record</TableCell>
+                        <TableCell>Пациент</TableCell>
+                        <TableCell>Контакт</TableCell>
+                        <TableCell>Медкарта</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>

@@ -1,18 +1,55 @@
 import FormItem from '../../../..//src/shared/FormItem'
 import { zodResolver } from '@hookform/resolvers/zod'
 import React from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
+import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { schema } from './print-schema'
 import { Input } from '@mui/material'
 import { Button } from '@mui/material'
+import DatePickerForm from '@/shared/DatePickerForm'
+import { PatientInputForm } from '@/shared/PatientInput'
+import TimeFieldForm from '@/shared/TimeFieldForm'
 
 type Props = {}
+
+function printFormData(data: z.infer<typeof schema>) {
+    const printContent = `
+      <h1>Данные для печати</h1>
+      <p><strong>ФИО пациента:</strong> ${data.name.label}</p>
+      <p><strong>Контакты пациента:</strong> ${data.phone}</p>
+      <p><strong>Вид обследования:</strong> ${data.examination}</p>
+      <p><strong>Контакты врача:</strong> ${data.doctor_phone}</p>
+      <p><strong>Дата:</strong> ${data.date}</p>
+      <p><strong>Время:</strong> ${data.time}</p>
+    `
+
+    const printWindow = window.open('', '_blank')
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Печать данных</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 20px; }
+            h1 { color: #333; }
+            p { margin: 5px 0; }
+          </style>
+        </head>
+        <body>
+          ${printContent}
+        </body>
+      </html>
+    `)
+
+    printWindow.document.close()
+    printWindow.print()
+}
 
 const Print = (props: Props) => {
     const form = useForm({ resolver: zodResolver(schema) })
 
-    const onSubmit = (data: Record<string, string>) => {}
+    const onSubmit: SubmitHandler<z.infer<typeof schema>> = (data) => {
+        printFormData(data)
+    }
 
     return (
         <div>
@@ -30,7 +67,7 @@ const Print = (props: Props) => {
 
                         <FormItem name="name">
                             <label htmlFor="name">ФИО</label>
-                            <Input {...form.register('name')} />
+                            <PatientInputForm name="name" />
                         </FormItem>
 
                         <FormItem name="phone">
@@ -52,7 +89,7 @@ const Print = (props: Props) => {
 
                         <FormItem name="date">
                             <label htmlFor="date">Дата</label>
-                            <Input {...form.register('date')} />
+                            <DatePickerForm name="date" />
                         </FormItem>
 
                         <FormItem name="doctor_phone">
@@ -62,7 +99,7 @@ const Print = (props: Props) => {
 
                         <FormItem name="time">
                             <label htmlFor="time">Время</label>
-                            <Input {...form.register('time')} />
+                            <TimeFieldForm name="time" />
                         </FormItem>
                     </div>
                 </form>

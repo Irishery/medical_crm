@@ -11,8 +11,12 @@ import {
 import { z } from 'zod'
 import { createDoctor } from '@/api/createDoctor'
 import { createAdmin } from '@/api/createAdmin'
+import { createUser } from '@/api/createUser'
+import { toast } from 'mui-sonner'
 
 const adminSchema = z.object({
+    username: z.string().min(5),
+    password: z.string().min(5),
     full_name: fullnameSchema,
     contact_info: phoneSchema,
 })
@@ -34,11 +38,10 @@ const AdministratorForm = ({ handleSubmit, ...props }: Props) => {
                 password: data.username,
             })
 
-            await createDoctor({
+            await createAdmin({
                 username: data.username,
                 full_name: data.full_name,
                 contact_info: data.contact_info,
-                speciality: data.speciality,
             })
             toast.success('Новый доктор создан: ' + data.full_name)
         } catch (e) {
@@ -60,6 +63,15 @@ const AdministratorForm = ({ handleSubmit, ...props }: Props) => {
                     }}
                 >
                     <div className="grid grid-cols-2 gap-5">
+                        <FormItem name="username">
+                            <label htmlFor="username">Username</label>
+                            <Input {...form.register('username')} />
+                        </FormItem>
+
+                        <FormItem name="password">
+                            <label htmlFor="password">Пароль</label>
+                            <Input {...form.register('password')} />
+                        </FormItem>
                         <FormItem name="full_name">
                             <label htmlFor="full_name">ФИО</label>
                             <Input {...form.register('full_name')} />
