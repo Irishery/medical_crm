@@ -71,6 +71,17 @@ def delete_adminn(db: Session, admin_id: int):
     db.commit()
 
 
+def update_admin(db: Session, admin_id: int, admin: schemas.AdminUpdate):
+    db_admin = db.query(models.Admin).filter(
+        models.Admin.id == admin_id).first()
+    if db_admin:
+        for key, value in admin.dict().items():
+            setattr(db_admin, key, value)
+        db.commit()
+        db.refresh(db_admin)
+    return db_admin
+
+
 def get_doctor(db: Session, doctor_id: int):
     return db.query(models.Doctor).filter(models.Doctor.id == doctor_id).first()
 
@@ -186,7 +197,7 @@ def get_patients_v2(db: Session, skip: int = 0, limit: int = 10, search: str = N
 
 
 def get_admins(db: Session, skip: int = 0, limit: int = 10, search: str = None):
-    query = db.query(models.User)
+    query = db.query(models.Admin)
 
     if search:
         # Split search string into tokens and create a prefix query
@@ -195,7 +206,7 @@ def get_admins(db: Session, skip: int = 0, limit: int = 10, search: str = None):
 
         # Generate search vector and tsquery
         search_vector = func.to_tsvector(
-            "russian", models.User.full_name + ' ' + models.User.username)
+            "russian", models.Admin.full_name + ' ' + models.User.username)
         ts_query = func.to_tsquery("russian", search_query)
 
         # Filter and sort by relevance
