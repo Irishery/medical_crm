@@ -389,6 +389,20 @@ def get_consultations(patient_id: int, db: Session = Depends(get_db)):
     return consultations
 
 
+@router.post("/consultations/", response_model=schemas.ConsultationResponse)
+def create_consultation(consultation: schemas.ConsultationCreate, db: Session = Depends(get_db)):
+    return crud.create_consultation(db=db, consultation=consultation)
+
+
+@router.put("/consultations/{consultation_id}", response_model=schemas.ConsultationResponse)
+def update_consultation(consultation_id: int, consultation: schemas.ConsultationUpdate, db: Session = Depends(get_db)):
+    db_consultation = crud.get_consultation(
+        db, consultation_id=consultation_id)
+    if db_consultation is None:
+        raise HTTPException(status_code=404, detail="Consultation not found")
+    return crud.update_consultation(db=db, consultation_id=consultation_id, consultation=consultation)
+
+
 @router.post("/token", response_model=schemas.Token)
 def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = crud.authenticate_user(db, form_data.username, form_data.password)

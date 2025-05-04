@@ -444,6 +444,25 @@ def get_consultations_by_patient_id(db: Session, patient_id: int):
     return [schemas.ConsultationResponse.from_orm(consultation) for consultation in consultations]
 
 
+def create_consultation(db: Session, consultation: schemas.ConsultationCreate):
+    db_consultation = models.Consultation(**consultation.dict())
+    db.add(db_consultation)
+    db.commit()
+    db.refresh(db_consultation)
+    return db_consultation
+
+
+def update_consultation(db: Session, consultation_id: int, consultation: schemas.ConsultationUpdate):
+    db_consultation = db.query(models.Consultation).filter(
+        models.Consultation.id == consultation_id).first()
+    if db_consultation:
+        for key, value in consultation.dict().items():
+            setattr(db_consultation, key, value)
+        db.commit()
+        db.refresh(db_consultation)
+    return db_consultation
+
+
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 SECRET_KEY = "your_secret_key"

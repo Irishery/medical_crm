@@ -238,6 +238,10 @@ class ConsultationBase(BaseModel):
 class ConsultationCreate(ConsultationBase):
     pass
 
+
+class ConsultationUpdate(ConsultationBase):
+    pass
+
 # Модель для ответа консультации
 
 
