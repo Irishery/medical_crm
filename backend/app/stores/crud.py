@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from jose import jwt
 from sqlalchemy import extract
 from sqlalchemy.orm import aliased
-from sqlalchemy import func, desc, extract
+from sqlalchemy import func, desc, extract, cast, Date
 from sqlalchemy.orm import Session, aliased
 from . import models, schemas
 from passlib.context import CryptContext
@@ -497,3 +497,97 @@ def get_current_user(db, token: str):
         return user
     except jwt.JWTError:
         return None
+
+
+def get_yearly_statistics(db: Session):
+    result = (
+        db.query(
+            extract('year', models.Schedule.date_time).label('year'),
+            func.count().label('value')
+        )
+        .group_by(extract('year', models.Schedule.date_time))
+        .all()
+    )
+    return [
+        {"date": str(int(row.year)), "value": row.value}
+        for row in result
+    ]
+
+
+def get_monthly_statistics(db: Session, year: int, month: int):
+    result = (
+        db.query(
+            extract('day', models.Schedule.date_time).label('day'),
+            func.count().label('value')
+        )
+        .filter(
+            extract('year', models.Schedule.date_time) == year,
+            extract('month', models.Schedule.date_time) == month
+        )
+        .group_by(extract('day', models.Schedule.date_time))
+        .all()
+    )
+    return [
+        {"date": f"{year}-{month:02d}-{int(row.day):02d}", "value": row.value}
+        for row in result
+    ]
+
+
+def get_daily_statistics(db: Session, start_date: str, end_date: str):
+    start = datetime.strptime(start_date, "%Y-%m-%d")
+    end = datetime.strptime(end_date, "%Y-%m-%d") + timedelta(days=1)
+
+    result = (
+        db.query(
+            cast(models.Schedule.date_time, Date).label('date'),
+            func.count().label('value')
+        )
+        .filter(
+            models.Schedule.date_time >= start,
+            models.Schedule.date_time < end
+        )
+        .group_by(cast(models.Schedule.date_time, Date))
+        .all()
+    )
+    return [
+        {"date": row.date.isoformat(), "value": row.value}
+        for row in result
+    ]
+
+
+def get_total_patients(db: Session):
+    return db.query(func.count(models.Patient.id)).scalar()
+
+
+def get_monthly_patients(db: Session):
+    today = datetime.today()
+    first_day = today.replace(day=1)
+    return (
+        db.query(func.count(models.Patient.id))
+        .filter(
+            models.Patient.created_at >= first_day,
+            models.Patient.created_at < today.replace(
+                day=1, month=today.month+1)
+        )
+        .scalar()
+    )
+
+
+def get_daily_patients(db: Session):
+    today = datetime.today()
+    return (
+        db.query(func.count(models.Patient.id))
+        .filter(
+            models.Patient.created_at >= today,
+            models.Patient.created_at < today + timedelta(days=1)
+        )
+        .scalar()
+    )
+
+
+def get_total_doctors(db: Session):
+    return db.query(func.count(models.Doctor.id)).scalar()
+
+
+def get_total_admins(db: Session):
+    return db.query(func.count(models.Admin.id)).scalar()

@@ -378,7 +378,7 @@ def update_medical_card(patient_id: int, updated_medical: schemas.MedicalRecordU
     return updated_medical_record
 
 
-@router.get("/consultations/{patient_id}", response_model=List[schemas.ConsultationResponse])
+@router.get("/consultations/{consultation_id}", response_model=List[schemas.ConsultationResponse])
 def get_consultations(patient_id: int, db: Session = Depends(get_db)):
     # Call the function to retrieve consultations for the given patient_id
     consultations = crud.get_consultations_by_patient_id(db, patient_id)
@@ -427,3 +427,47 @@ def read_users_me(token: str = Depends(oauth2_scheme), db: Session = Depends(get
     if not user:
         raise HTTPException(status_code=400, detail="Invalid token")
     return user
+
+
+@router.get("/statistics/schedule/yearly")
+def get_yearly_statistics_endpoint(db: Session = Depends(get_db)):
+    return crud.get_yearly_statistics(db)
+
+
+@router.get("/statistics/schedule/monthly")
+def get_monthly_statistics_endpoint(year: int, month: int, db: Session = Depends(get_db)):
+    return crud.get_monthly_statistics(db, year, month)
+
+
+@router.get("/statistics/schedule/daily")
+def get_daily_statistics_endpoint(start_date: str, end_date: str, db: Session = Depends(get_db)):
+    return crud.get_daily_statistics(db, start_date, end_date)
+
+
+@router.get("/statistics/patients/")
+def get_patients_statistics_endpoint(db: Session = Depends(get_db)):
+    # total_patients = crud.get_total_patients(db)
+    # monthly_patients = crud.get_monthly_patients(db)
+    # daily_patients = crud.get_daily_patients(db)
+
+    total_patients = 120
+    monthly_patients = 20
+    daily_patients = 3
+
+    return {
+        "total_patients": total_patients,
+        "monthly_patients": monthly_patients,
+        "daily_patients": daily_patients
+    }
+
+
+@router.get("/statistics/employees")
+def get_employees_statistics_endpoint(db: Session = Depends(get_db)):
+    total_doctors = crud.get_total_doctors(db)
+    total_admins = crud.get_total_admins(db)
+
+    return {
+        "total_employees": total_doctors + total_admins,
+        "total_doctors": total_doctors,
+        "total_admins": total_admins
+    }
