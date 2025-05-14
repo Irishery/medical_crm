@@ -15,7 +15,7 @@ function HeadDoctor() {
     return (
         <div id="admin-container">
             <NavigationBar />
-            <div id="page-container" className="container pt-5">
+            <div id="page-container" className="container pb-10 pt-5">
                 <Routes>
                     <Route path="schedule" element={<HeadDoctorSchedule />} />
                     <Route

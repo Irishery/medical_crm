@@ -10,7 +10,7 @@ const Card = ({ title, number }: Props) => {
         <div className="rounded-lg border-[1px] border-solid border-[#BFC9D4] p-6">
             <span className="text-base">{title}</span>
             <br />
-            <span className="text-3xl">{number}</span>
+            <span className="block h-9 text-3xl">{number}</span>
         </div>
     )
 }
